@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>PSYCHO_LOG: Case Files v21</title>
+    
+    <title>PSYCHO_LOG: Layer 01</title>
+    <link rel="icon" type="image/png" href="https://file.garden/aWe99vhwaGcNwkok/%E6%84%9B%E9%BA%97%E7%B5%B2%E6%A8%82%E5%9C%92/ICON.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0F2B42">
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -29,29 +35,13 @@
             flex-direction: column;
         }
 
-        /* === 轉場層 === */
-        #transition-layer {
-            position: absolute; inset: 0; background: #000; z-index: 200;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        #transition-layer.active { opacity: 1; pointer-events: auto; }
-        .loading-text {
-            font-family: 'Share Tech Mono'; font-size: 1.5rem; color: var(--neon-cyan);
-            animation: pulseCyan 1s infinite;
-        }
-        .loading-bar { width: 200px; height: 2px; background: #333; margin-top: 10px; }
-        .loading-fill { height: 100%; width: 0%; background: var(--neon-cyan); }
-
-        /* === 背景層 === */
+        /* === 視覺濾鏡 === */
         #bg-layer {
             position: absolute; inset: 0; z-index: 0;
             background-size: cover; background-position: center;
             transition: background-image 0.5s ease-in-out;
             filter: brightness(0.4);
         }
-
-        /* === 視覺濾鏡 === */
         .scan-lines {
             position: absolute; inset: 0; pointer-events: none; z-index: 99;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
@@ -71,63 +61,81 @@
         }
         .screen.active { display: flex; opacity: 1; }
 
-        /* === 1. Prologue & Title === */
+        /* === 轉場層 === */
+        #transition-layer {
+            position: absolute; inset: 0; background: #000; z-index: 200;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        #transition-layer.active { opacity: 1; pointer-events: auto; }
+        .loading-text { font-family: 'Share Tech Mono'; font-size: 1.5rem; color: var(--neon-cyan); animation: pulseCyan 1s infinite; }
+        .loading-bar { width: 200px; height: 2px; background: #333; margin-top: 10px; }
+        .loading-fill { height: 100%; width: 0%; background: var(--neon-cyan); }
+
+        /* === 1. Title & Prologue === */
         .prologue-content {
             width: 80%; max-width: 600px; margin: auto;
             font-family: 'Share Tech Mono'; color: var(--neon-cyan);
             line-height: 1.8; font-size: 1.1rem; text-shadow: 0 0 5px var(--neon-cyan);
             white-space: pre-wrap; z-index: 20;
         }
-        
         .files-btn {
             position: absolute; top: 20px; right: 20px; z-index: 150;
             background: rgba(0,0,0,0.8); border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
             padding: 8px 15px; font-family: 'Share Tech Mono'; cursor: pointer;
-            border-radius: 4px; display: none; /* 標題畫面不顯示 */
+            border-radius: 4px; display: none;
         }
-        .files-btn:hover { background: rgba(0,240,255,0.2); }
+        .chapter-btn {
+            position: absolute; top: 20px; left: 20px; z-index: 150;
+            background: rgba(0,0,0,0.8); border: 1px solid var(--neon-yellow); color: var(--neon-yellow);
+            padding: 8px 15px; font-family: 'Share Tech Mono'; cursor: pointer;
+            border-radius: 4px; display: none;
+        }
+        .settings-btn {
+            position: absolute; top: 20px; right: 120px; z-index: 150;
+            background: rgba(0,0,0,0.8); border: 1px solid #888; color: #ccc;
+            padding: 8px 15px; font-family: 'Share Tech Mono'; cursor: pointer;
+            border-radius: 4px;
+        }
+        .slider-row { display: flex; align-items: center; gap: 15px; margin: 10px 0; }
+        .slider-row input { flex: 1; accent-color: var(--neon-cyan); }
+        .log-box { 
+            height: 300px; overflow-y: auto; background: #000; border: 1px solid #333; 
+            padding: 10px; font-size: 0.9rem; color: #aaa; margin-top: 10px; 
+            white-space: pre-wrap; font-family: 'Noto Sans TC', sans-serif;
+        }
+        .log-entry { margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 4px; }
+        .log-speaker { color: var(--neon-cyan); font-weight: bold; margin-right: 5px; }
 
-        /* === 2. Day Shift === */
+        /* === 2. Day Shift (Visual) === */
         .day-container { display: flex; flex-direction: column; height: 100%; position: relative; }
-
         .portrait-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 75%; 
             z-index: 1; display: flex; justify-content: center; align-items: flex-end;
             overflow: hidden; pointer-events: none;
         }
-        
-        /* 統一立繪樣式 (包含哈蘇) */
+        /* 立繪統一設定 */
         .day-container .char-portrait {
-            height: auto; width: auto; 
-            max-height: 120%; 
+            height: auto; width: auto; max-height: 120%; 
             object-fit: contain; object-position: center bottom;
             filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
-            opacity: 0; 
-            /* 統一變換：放大 118%，下移 15% */
-            transform: scale(1.18) translateY(15%); 
+            opacity: 0; transform: scale(1.18) translateY(15%); 
             transition: opacity 0.5s, filter 0.3s;
         }
         .day-container .char-portrait.active { opacity: 1; }
 
+        /* 特效 */
         .glitch-static { animation: staticNoiseDay 3s infinite; }
-        .glitch-heavy { 
-            animation: violentGlitchDay 0.2s infinite; 
-            filter: hue-rotate(90deg) drop-shadow(5px 0 0 red) !important; 
-        }
-        .effect-cured { 
-            filter: brightness(1.2) drop-shadow(0 0 20px gold) !important; 
-            animation: breatheDay 4s ease-in-out infinite !important;
-        }
+        .glitch-heavy { animation: violentGlitchDay 0.2s infinite; filter: hue-rotate(90deg) drop-shadow(5px 0 0 red) !important; }
+        .effect-cured { filter: brightness(1.2) drop-shadow(0 0 20px gold) !important; animation: breatheDay 4s ease-in-out infinite !important; }
 
+        /* === Day Shift (Dialogue) === */
         .dialogue-wrapper {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 35%;
             z-index: 20; background: var(--ui-panel);
-            border-top: 2px solid var(--neon-cyan);
-            padding: 15px; display: flex; flex-direction: column;
-            box-shadow: 0 -10px 50px rgba(0,0,0,1);
-            cursor: pointer;
+            border-top: 2px solid var(--neon-cyan); padding: 15px; display: flex; flex-direction: column;
+            box-shadow: 0 -10px 50px rgba(0,0,0,1); cursor: pointer;
         }
-
         .tools-row { position: absolute; top: -50px; right: 15px; display: flex; gap: 10px; }
         .scan-btn {
             background: rgba(0, 0, 0, 0.9); border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
@@ -140,96 +148,101 @@
         .speaker-tag { 
             color: #000; background: var(--neon-cyan); display: inline-block; padding: 2px 10px; 
             font-weight: bold; font-family: 'Share Tech Mono'; margin-bottom: 5px; align-self: flex-start;
-            box-shadow: 0 0 10px var(--neon-cyan);
         }
-        .dialogue-text { 
-            font-size: 1rem; line-height: 1.6; margin-bottom: 10px; flex: 1; overflow-y: hidden; 
-            white-space: pre-wrap; color: #fff;
-        }
-        .next-arrow {
-            position: absolute; bottom: 10px; right: 10px; font-size: 1.5rem; color: var(--neon-cyan);
-            animation: bounce 1s infinite; display: none;
-        }
+        .dialogue-text { font-size: 1rem; line-height: 1.6; margin-bottom: 10px; flex: 1; overflow-y: hidden; white-space: pre-wrap; color: #fff; }
+        .next-arrow { position: absolute; bottom: 10px; right: 10px; font-size: 1.5rem; color: var(--neon-cyan); animation: bounce 1s infinite; display: none; }
         .next-arrow.show { display: block; }
-
-        .choices-list { 
-            display: none; flex-direction: column; gap: 8px; 
-            position: absolute; bottom: 15px; left: 15px; right: 15px; z-index: 50;
-        }
+        .choices-list { display: none; flex-direction: column; gap: 8px; position: absolute; bottom: 15px; left: 15px; right: 15px; z-index: 50; }
         .choices-list.show { display: flex; animation: slideUp 0.3s ease-out; }
-
-        .choice-btn {
-            padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-main); text-align: left; border-radius: 4px; font-size: 0.9rem;
-            transition: 0.2s; opacity: 0; animation: fadeIn 0.3s forwards;
-        }
-        .choice-btn:nth-child(1) { animation-delay: 0.1s; }
-        .choice-btn:nth-child(2) { animation-delay: 0.2s; }
+        .choice-btn { padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); text-align: left; border-radius: 4px; font-size: 0.9rem; transition: 0.2s; opacity: 0; animation: fadeIn 0.3s forwards; }
         .choice-btn:active { background: rgba(0,240,255,0.2); border-color: var(--neon-cyan); }
         .choice-btn.key-unlock { border-color: var(--neon-yellow); background: rgba(255, 215, 0, 0.1); }
-        .choice-btn.key-unlock::before { content: "★ "; color: var(--neon-yellow); }
-
         .redacted { background: #000; color: transparent; padding: 0 6px; border-radius: 2px; border: 1px solid #333; user-select: none; display: inline-block; }
-        .revealed { 
-            background: transparent; color: var(--neon-red); border-color: transparent; 
-            font-weight: bold; animation: textGlitch 0.3s infinite; text-shadow: 2px 0 blue, -2px 0 red; 
-        }
+        .revealed { background: transparent; color: var(--neon-red); border-color: transparent; font-weight: bold; animation: textGlitch 0.3s infinite; text-shadow: 2px 0 blue, -2px 0 red; }
 
-        /* === 3. Night Shift === */
+        /* === Day 2: Word Puzzle UI === */
+        #puzzle-area {
+            position: absolute; inset: 0; z-index: 30; background: rgba(0,0,0,0.85);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #puzzle-area.active { display: flex; }
+        .puzzle-header { color: var(--neon-yellow); font-family: 'Share Tech Mono'; margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-yellow); }
+        .puzzle-slots { display: flex; gap: 10px; margin-bottom: 30px; min-height: 50px; }
+        .slot { width: 100px; height: 50px; border-bottom: 2px solid var(--neon-cyan); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; }
+        .word-cloud { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 90%; }
+        .word-bit { 
+            padding: 10px 20px; border: 1px solid #555; background: #222; color: #aaa; 
+            cursor: pointer; border-radius: 20px; transition: 0.2s; animation: popIn 0.3s;
+        }
+        .word-bit:hover { border-color: var(--neon-cyan); color: #fff; transform: scale(1.1); }
+        .word-bit.selected { background: var(--neon-cyan); color: #000; border-color: var(--neon-cyan); }
+
+        /* === Day 3: Frequency UI === */
+        #frequency-area {
+            position: absolute; inset: 0; z-index: 30; background: rgba(0,0,0,0.9);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #frequency-area.active { display: flex; }
+        .wave-canvas { border: 1px solid var(--neon-cyan); background: #001; margin-bottom: 20px; width: 80%; height: 200px; box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+        .freq-controls { width: 80%; display: flex; flex-direction: column; gap: 15px; }
+        .freq-row { display: flex; align-items: center; color: var(--neon-cyan); font-family: 'Share Tech Mono'; gap: 10px; }
+        .freq-row label { width: 100px; }
+        .freq-row input { flex: 1; accent-color: var(--neon-cyan); cursor: pointer; }
+        
+        /* Fake Bubble */
+        .fake-bubble {
+            border-color: var(--neon-red) !important; color: var(--neon-red) !important;
+            animation: violentGlitchNight 0.3s infinite; opacity: 0.8;
+        }
+        
+        /* === Day 4: Hacking UI === */
+        #hacking-area {
+            position: absolute; inset: 0; z-index: 30; background: rgba(0,0,0,0.92);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #hacking-area.active { display: flex; }
+        .hack-grid { display: grid; grid-template-columns: repeat(5, 60px); grid-template-rows: repeat(5, 60px); gap: 10px; margin-bottom: 20px; }
+        .hack-node { width: 60px; height: 60px; background: #111; border: 1px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; position: relative; }
+        .hack-node:hover { border-color: #666; }
+        .hack-node.start { border-color: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); background: rgba(0, 255, 136, 0.1); }
+        .hack-node.end { border-color: #a0f; box-shadow: 0 0 10px #a0f; background: rgba(170, 0, 255, 0.1); }
+        .hack-node.path { background: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); border-color: #fff; }
+        .hack-node.defense { border-color: var(--neon-red); color: var(--neon-red); animation: pulseRed 1s infinite; }
+        .hack-timer-bar { width: 300px; height: 4px; background: #333; margin-top: 20px; }
+        .hack-timer-fill { height: 100%; width: 100%; background: var(--neon-yellow); transition: width 0.1s linear; }
+        .hack-node.trap.revealed { border-color: var(--neon-yellow); opacity: 0.5; }
+        
+        /* Day 4 Visual Effects */
+        @keyframes flowGlow {
+            0% { background-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); transform: scale(1); }
+            50% { background-color: #fff; box-shadow: 0 0 30px var(--neon-cyan), 0 0 50px var(--neon-cyan); transform: scale(1.2); }
+            100% { background-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); transform: scale(1); }
+        }
+        .hack-node.success-flow { animation: flowGlow 0.5s ease-in-out forwards; border-color: #fff; }
+
+        /* === Night Shift UI === */
         .night-ui { display: grid; grid-template-rows: auto 1fr auto; height: 100%; background: #000; }
         .cam-header { padding: 10px 15px; background: #111; border-bottom: 1px solid #333; display: flex; justify-content: space-between; font-family: 'Share Tech Mono'; color: #888; }
-        
-        .cam-view { 
-            position: relative; background: #050505; border: 1px solid #222; margin: 5px; 
-            overflow: hidden; display: flex; justify-content: center; align-items: flex-end; 
-        }
-        
-        #night-room-bg {
-            position: absolute; inset: 0; background-size: cover; background-position: center; 
-            z-index: 0; filter: brightness(0.3);
-        }
-
-        .cam-feed { 
-            height: 95%; width: auto; 
-            object-fit: contain; z-index: 1; position: relative;
-            filter: grayscale(50%) brightness(0.5); transition: 0.1s;
-            drop-shadow: 0 10px 20px rgba(0,0,0,0.8);
-        }
+        .cam-view { position: relative; background: #050505; border: 1px solid #222; margin: 5px; overflow: hidden; display: flex; justify-content: center; align-items: flex-end; }
+        #night-room-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; filter: brightness(0.3); }
+        .cam-feed { height: 95%; width: auto; object-fit: contain; z-index: 1; position: relative; filter: grayscale(50%) brightness(0.5); transition: 0.1s; drop-shadow: 0 10px 20px rgba(0,0,0,0.8); }
         .cam-feed.active { filter: grayscale(0%) brightness(0.8) contrast(1.1); }
         .cam-feed.jammed { filter: brightness(0); opacity: 0; }
-
-        .jumpscare {
-            position: absolute; inset: 0; background: #000; z-index: 200; display: none;
-            justify-content: center; align-items: center;
-        }
-        .jumpscare img { width: 100%; height: 100%; object-fit: contain; animation: violentGlitchNight 0.1s infinite; }
-
-        .jam-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 60;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--neon-red); font-family: 'Share Tech Mono';
-        }
+        .jumpscare { position: absolute; inset: 0; background: #000; z-index: 200; display: none; justify-content: center; align-items: center; }
+        .jumpscare img { width: 100%; height: 100%; object-fit: contain; transform: scale(1.5); animation: violentGlitchNight 0.1s infinite; }
+        .jam-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 60; display: none; flex-direction: column; align-items: center; justify-content: center; color: var(--neon-red); font-family: 'Share Tech Mono'; }
         .jam-overlay.active { display: flex; }
         .fix-btn { margin-top: 10px; padding: 10px 20px; border: 2px solid var(--neon-red); background: #000; color: var(--neon-red); font-weight: bold; cursor: pointer; animation: pulseRed 0.5s infinite; }
-
         .bubble-layer { position: absolute; inset: 0; pointer-events: none; z-index: 50; }
-        .speech-bubble {
-            position: absolute; padding: 10px 15px; background: #fff; color: #000;
-            border-radius: 20px; font-weight: bold; cursor: pointer; pointer-events: auto;
-            box-shadow: 0 0 10px rgba(255,255,255,0.5); animation: popIn 0.3s; 
-            max-width: 180px; text-align: center; font-size: 0.85rem; border: 2px solid #000;
-        }
+        .speech-bubble { position: absolute; padding: 10px 15px; background: #fff; color: #000; border-radius: 20px; font-weight: bold; cursor: pointer; pointer-events: auto; box-shadow: 0 0 10px rgba(255,255,255,0.5); animation: popIn 0.3s; max-width: 180px; text-align: center; font-size: 0.85rem; border: 2px solid #000; }
         .speech-bubble:active { transform: scale(0.9); background: var(--neon-cyan); }
-
         .control-deck { background: #111; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
         .cam-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
         .cam-btn { background: #222; border: 1px solid #444; color: #666; padding: 10px 0; display: flex; flex-direction: column; align-items: center; font-family: 'Share Tech Mono'; position: relative; cursor: pointer; }
         .cam-btn.selected { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0,240,255,0.1); }
         .cam-btn.alert { border-color: var(--neon-red); color: var(--neon-red); animation: pulseRed 0.5s infinite; }
-        
         .stress-bar { width: 80%; height: 3px; background: #333; margin-top: 5px; }
         .stress-val { height: 100%; background: var(--neon-red); width: 0%; transition: 0.3s; }
-
         .action-row { display: flex; gap: 10px; height: 50px; }
         .act-btn { flex: 1; background: #1a1a1a; border: 1px solid #555; color: #fff; font-family: 'Share Tech Mono'; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .act-btn:active { background: #333; }
@@ -237,37 +250,47 @@
         .act-btn.sedative:disabled { border-color: #333; color: #333; opacity: 0.5; }
         .act-btn.broadcast { border-color: var(--neon-yellow); color: var(--neon-yellow); }
 
-        /* Report */
-        .report-content { width: 85%; background: #111; border: 1px solid var(--neon-green); padding: 20px; font-family: 'Share Tech Mono'; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
-        
-        .notification {
-            position: fixed; top: 15%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.95); border: 1px solid var(--neon-green); color: var(--neon-green);
-            padding: 10px 20px; z-index: 200; font-family: 'Share Tech Mono';
-            opacity: 0; pointer-events: none; transition: 0.3s; text-shadow: 0 0 5px var(--neon-green);
-        }
-        .notification.show { opacity: 1; top: 20%; }
-
-        /* Files Modal */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 300;
-            display: none; align-items: center; justify-content: center;
-        }
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 300; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .file-card {
-            width: 90%; max-height: 80vh; overflow-y: auto; background: #111;
-            border: 1px solid var(--neon-cyan); padding: 20px;
-            font-family: 'Share Tech Mono'; box-shadow: 0 0 30px rgba(0,240,255,0.2);
-        }
+        .file-card { width: 90%; max-height: 80vh; overflow-y: auto; background: #111; border: 1px solid var(--neon-cyan); padding: 20px; font-family: 'Share Tech Mono'; box-shadow: 0 0 30px rgba(0,240,255,0.2); }
         .file-header { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; color: var(--neon-cyan); font-size: 1.2rem; }
         .patient-entry { background: #1a1a1a; padding: 15px; margin-bottom: 10px; border-left: 3px solid #333; }
         .patient-entry.stable { border-left-color: var(--neon-green); }
-        .patient-entry h3 { margin: 0 0 5px 0; color: #fff; }
         .keyword-box { font-size: 0.9rem; color: #888; }
         .keyword-box span { color: var(--neon-red); }
         .close-modal { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+        .report-content { width: 85%; background: #111; border: 1px solid var(--neon-green); padding: 20px; font-family: 'Share Tech Mono'; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+        
+        /* System Message Modal */
+        .system-msg-box { background: #000; border: 2px solid var(--neon-red); padding: 30px; text-align: center; max-width: 80%; font-family: 'Share Tech Mono'; box-shadow: 0 0 20px var(--neon-red); animation: popIn 0.2s; position: relative; }
+        .system-msg-box.success { border-color: var(--neon-green); box-shadow: 0 0 20px var(--neon-green); }
+        .system-msg-box.success h2 { color: var(--neon-green); }
+        .system-msg-box.success button { border-color: var(--neon-green); color: var(--neon-green); }
+        .system-msg-box h2 { color: var(--neon-red); margin-bottom: 20px; font-size: 1.5rem; }
+        .system-msg-box button { background: transparent; border: 1px solid var(--neon-red); color: var(--neon-red); padding: 10px 30px; margin-top: 20px; cursor: pointer; font-family: 'Share Tech Mono'; font-size: 1.1rem; transition: 0.2s; }
+        .system-msg-box button:hover { background: rgba(255, 255, 255, 0.1); }
 
-        /* Anim - General */
+        /* Files Accordion */
+        .patient-entry { cursor: pointer; transition: 0.3s; }
+        .patient-entry:hover { background: #222; }
+        .patient-details { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; font-size: 0.9rem; color: #aaa; line-height: 1.6; white-space: pre-wrap; }
+        .patient-entry.expanded .patient-details { display: block; animation: slideUp 0.3s; }
+
+        .notification { position: fixed; top: 15%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px 20px; z-index: 200; font-family: 'Share Tech Mono'; opacity: 0; pointer-events: none; transition: 0.3s; text-shadow: 0 0 5px var(--neon-green); }
+        .notification.show { opacity: 1; top: 20%; }
+        
+        /* Chapter Select */
+        .chapter-list { list-style: none; padding: 0; }
+        .chapter-item { background: #1a1a1a; margin-bottom: 10px; padding: 15px; border: 1px solid #333; cursor: pointer; transition: 0.2s; }
+        .chapter-item:hover { border-color: var(--neon-yellow); background: #222; }
+        .chapter-item.locked { opacity: 0.5; pointer-events: none; border-style: dashed; }
+        .layer-title { color: var(--neon-yellow); font-size: 1.2rem; margin-bottom: 5px; }
+
+        /* Highlights */
+        .keyword-highlight { color: var(--neon-yellow); text-shadow: 0 0 5px var(--neon-yellow); font-weight: bold; border-bottom: 1px dashed var(--neon-yellow); }
+
+        /* Animations */
         @keyframes turnOn { 0%{transform:scale(1,0.01) translate3d(0,0,0);filter:brightness(30);} 30%{transform:scale(1,0.01) translate3d(0,0,0);filter:brightness(30);} 35%{transform:scale(1,1) translate3d(0,0,0);filter:brightness(1);} 100%{transform:scale(1,1) translate3d(0,0,0);filter:brightness(1);} }
         @keyframes breathe { 0%,100%{transform:scale(1.1) translateY(20%);} 50%{transform:scale(1.12) translateY(19.5%);} } 
         @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
@@ -277,36 +300,11 @@
         @keyframes pulseCyan { 0%{box-shadow:0 0 0 0 rgba(0,240,255,0.4)} 100%{box-shadow:0 0 0 10px rgba(0,240,255,0)} }
         @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
         @keyframes textGlitch { 0%{transform:translate(0);text-shadow:2px 0 red,-2px 0 blue;} 50%{transform:translate(1px,-1px);text-shadow:-1px 0 red,1px 0 blue;} 100%{transform:translate(0);text-shadow:2px 0 red,-2px 0 blue;} }
-        
-        /* Anim - Day Specific (Anchor Position: scale 1.18, Y 15%) */
-        @keyframes staticNoiseDay { 
-            0%, 100% { transform: scale(1.18) translateY(15%) translate(0,0); filter: contrast(110%) brightness(0.9); }
-            10% { transform: scale(1.18) translateY(15%) translate(-0.5px, 0.5px); } 
-            20% { transform: scale(1.18) translateY(15%) translate(0.5px, -0.5px); }
-        }
-        @keyframes violentGlitchDay { 
-            0% { transform: scale(1.18) translateY(15%) translate(0,0); } 
-            20% { transform: scale(1.18) translateY(15%) translate(-2px,2px); } 
-            40% { transform: scale(1.18) translateY(15%) translate(2px,-2px); } 
-            60% { transform: scale(1.18) translateY(15%) translate(-2px,-2px); } 
-        }
-        @keyframes breatheDay { 
-            0%, 100% { transform: scale(1.18) translateY(15%); } 
-            50% { transform: scale(1.2) translateY(14.5%); } 
-        }
-
-        /* Anim - Night Specific (No Anchor) */
-        @keyframes violentGlitchNight { 
-            0%{transform:translate(0,0);} 20%{transform:translate(-5px,2px);} 40%{transform:translate(5px,-2px);} 60%{transform:translate(-5px,5px);} 
-        }
-        
-        /* 畫面掃描震動 */
-        @keyframes scanShake {
-            10%, 90% { transform: translate3d(-4px, 0, 0); }
-            20%, 80% { transform: translate3d(8px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-10px, 0, 0); }
-            40%, 60% { transform: translate3d(10px, 0, 0); }
-        }
+        @keyframes staticNoiseDay { 0%, 100% { transform: scale(1.18) translateY(15%) translate(0,0); filter: contrast(110%) brightness(0.9); } 10% { transform: scale(1.18) translateY(15%) translate(-0.5px, 0.5px); } 20% { transform: scale(1.18) translateY(15%) translate(0.5px, -0.5px); } }
+        @keyframes violentGlitchDay { 0% { transform: scale(1.18) translateY(15%) translate(0,0); } 20% { transform: scale(1.18) translateY(15%) translate(-2px,2px); } 40% { transform: scale(1.18) translateY(15%) translate(2px,-2px); } 60% { transform: scale(1.18) translateY(15%) translate(-2px,-2px); } }
+        @keyframes breatheDay { 0%, 100% { transform: scale(1.18) translateY(15%); } 50% { transform: scale(1.2) translateY(14.5%); } }
+        @keyframes violentGlitchNight { 0%{transform:translate(0,0);} 20%{transform:translate(-5px,2px);} 40%{transform:translate(5px,-2px);} 60%{transform:translate(-5px,5px);} }
+        @keyframes scanShake { 10%, 90% { transform: translate3d(-4px, 0, 0); } 20%, 80% { transform: translate3d(8px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-10px, 0, 0); } 40%, 60% { transform: translate3d(10px, 0, 0); } }
 
     </style>
 </head>
@@ -323,11 +321,14 @@
     </div>
 
     <button class="files-btn" id="btn-files" onclick="toggleFiles()">📂 FILES</button>
+    <button class="chapter-btn" id="btn-chapter" onclick="toggleChapters()">📚 CHAPTERS</button>
+    <button class="settings-btn" id="btn-settings" onclick="toggleSettings()">⚙️ SYSTEM</button>
 
     <div id="screen-title" class="screen active" style="justify-content:center; align-items:center; text-align:center;">
         <h1 style="font-family:'Share Tech Mono'; color:var(--neon-cyan); font-size:2.5rem; text-shadow:0 0 10px var(--neon-cyan);">PSYCHO_LOG<br><span style="font-size:1.2rem; color:#fff;">MIDNIGHT WARD</span></h1>
         <p style="color:#666; margin-bottom:30px;">監控 · 診療 · 生存</p>
         <button onclick="startPrologue()" style="padding:15px 40px; background:transparent; border:1px solid var(--neon-cyan); color:var(--neon-cyan); font-family:'Share Tech Mono'; font-size:1.2rem; cursor:pointer;">START DEMO</button>
+        <button onclick="toggleChapters()" style="margin-top:15px; padding:10px 40px; background:transparent; border:1px solid var(--neon-yellow); color:var(--neon-yellow); font-family:'Share Tech Mono'; font-size:1rem; cursor:pointer;">CHAPTERS</button>
     </div>
 
     <div id="screen-prologue" class="screen" style="justify-content:center; align-items:center; cursor:pointer;" onclick="skipPrologue()">
@@ -350,6 +351,31 @@
                 <div class="next-arrow" id="next-icon">▼</div>
                 <div class="choices-list" id="day-choices"></div>
             </div>
+
+            <div id="puzzle-area">
+                <div class="puzzle-header">COGNITIVE RECONSTRUCTION</div>
+                <div class="puzzle-slots" id="puzzle-slots"></div>
+                <div class="word-cloud" id="word-cloud"></div>
+                <button onclick="submitPuzzle()" style="margin-top:20px; padding:10px 30px; background:var(--neon-cyan); border:none; font-weight:bold; cursor:pointer;">SUBMIT</button>
+            </div>
+
+            <div id="frequency-area">
+                <div class="puzzle-header">FREQUENCY SYNCHRONIZATION</div>
+                <canvas id="wave-canvas" class="wave-canvas"></canvas>
+                <div class="freq-controls">
+                    <div class="freq-row"><label>FREQUENCY</label><input type="range" id="slider-freq" min="1" max="100" value="50"></div>
+                    <div class="freq-row"><label>AMPLITUDE</label><input type="range" id="slider-amp" min="1" max="100" value="50"></div>
+                </div>
+                <button onclick="submitFrequency()" style="margin-top:20px; padding:10px 30px; background:var(--neon-cyan); border:none; font-weight:bold; cursor:pointer;">SYNC</button>
+            </div>
+
+            <div id="hacking-area">
+                <div class="puzzle-header">MENTAL FIREWALL HACKING</div>
+                <div class="hack-grid" id="hack-grid"></div>
+                <div class="hack-timer-bar"><div class="hack-timer-fill" id="hack-timer"></div></div>
+                <div style="color:#666; margin-top:10px; font-size:0.8rem;">CONNECT [REASON] TO [CHAOS] // AVOID DEFENSE NODES</div>
+                <button onclick="resetHack()" style="margin-top:15px; padding:5px 15px; background:#333; border:1px solid var(--neon-red); color:var(--neon-red); cursor:pointer; font-family:'Share Tech Mono';">RESET SYSTEM (-15s)</button>
+            </div>
         </div>
     </div>
 
@@ -362,13 +388,20 @@
         </div>
     </div>
 
+    <div id="screen-debrief" class="screen" style="justify-content:center; align-items:center; background:rgba(0,0,0,0.9);">
+        <div class="prologue-content" style="color:var(--neon-green);">
+            <div id="debrief-text"></div>
+        </div>
+        <button id="btn-next-day" onclick="startNextDay()" style="margin-top:30px; padding:10px 30px; background:transparent; border:1px solid var(--neon-green); color:var(--neon-green); display:none;">START NEXT SHIFT</button>
+    </div>
+
     <div id="screen-night" class="screen">
         <div class="night-ui">
             <div class="cam-header">
                 <span id="night-clock" style="font-size:1.2rem; color:#fff;">12:00 AM</span>
                 <span class="power-display">⚡ <span id="night-power">100</span>%</span>
             </div>
-            <div class="cam-view" id="night-cam-view">
+            <div class="cam-view" id="night-cam-view" onclick="handleCamClick(event)">
                 <div id="night-room-bg"></div>
                 <img id="night-feed" class="cam-feed" src="">
                 <div id="bubble-layer" class="bubble-layer"></div>
@@ -397,17 +430,75 @@
         </div>
     </div>
 
+    <div id="modal-chapters" class="modal-overlay">
+        <div class="file-card">
+            <div class="file-header">
+                <span>CHAPTER_SELECT</span>
+                <button class="close-modal" onclick="toggleChapters()">×</button>
+            </div>
+            <div class="layer-title">Layer #01</div>
+            <ul class="chapter-list">
+                <li class="chapter-item" onclick="loadChapter(1)">
+                    <div style="color:var(--neon-cyan)">DAY 01: OBSERVATION</div>
+                    <small style="color:#666">Standard Therapy Protocol</small>
+                </li>
+                <li class="chapter-item locked" id="chap-day2" onclick="loadChapter(2)">
+                    <div style="color:var(--neon-yellow)">DAY 02: RECONSTRUCTION</div>
+                    <small style="color:#666">Cognitive Puzzle Protocol</small>
+                </li>
+                <li class="chapter-item locked" id="chap-day3" onclick="loadChapter(3)">
+                    <div style="color:var(--neon-red)">DAY 03: SYNCHRONIZATION</div>
+                    <small style="color:#666">Frequency Tuning Protocol</small>
+                </li>
+                <li class="chapter-item locked" id="chap-day4" onclick="loadChapter(4)">
+                    <div style="color:#ff0055">DAY 04: INTERVENTION</div>
+                    <small style="color:#666">Mental Hacking Protocol</small>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modal-settings" class="modal-overlay">
+        <div class="file-card">
+            <div class="file-header">
+                <span>SYSTEM_CONFIG</span>
+                <button class="close-modal" onclick="toggleSettings()">×</button>
+            </div>
+            <div class="settings-section">
+                <h3>AUDIO</h3>
+                <div class="slider-row"><span>BGM</span><input type="range" min="0" max="1" step="0.1" value="0.5" onchange="setVolume('bgm', this.value)"></div>
+                <div class="slider-row"><span>SFX</span><input type="range" min="0" max="1" step="0.1" value="1" onchange="setVolume('sfx', this.value)"></div>
+            </div>
+            <div class="settings-section" style="margin-top:20px;">
+                <h3>DIALOGUE_LOG</h3>
+                <div id="log-container" class="log-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-system-msg" class="modal-overlay" style="z-index: 400;">
+        <div class="system-msg-box" id="sys-msg-box">
+            <h2 id="sys-msg-title">SYSTEM ALERT</h2>
+            <div id="sys-msg-content" style="margin-bottom:20px; color:#fff;"></div>
+            <button id="sys-msg-btn">ACKNOWLEDGE</button>
+        </div>
+    </div>
+
     <div id="screen-jumpscare" class="jumpscare">
         <img id="jumpscare-img" src="" alt="DEATH">
     </div>
 
     <audio id="bgm-day" loop src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E5%95%8F%E8%A8%BABGM.mp3"></audio>
+    <audio id="bgm-day2" loop src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/Day2%E5%95%8F%E8%A8%BA%E9%9F%B3%E6%A8%82.mp3"></audio>
+    <audio id="bgm-day3" loop src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/Day3%E5%95%8F%E8%A8%BA%E9%9F%B3%E6%A8%82.mp3"></audio>
+    <audio id="bgm-day4" loop src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/Day4%E5%95%8F%E8%A8%BA%E9%9F%B3%E6%A8%82.mp3"></audio>
     <audio id="bgm-night" loop src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E5%A4%9C%E6%99%9ABGM.mp3"></audio>
     <audio id="sfx-type" src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E9%BB%9E%E6%93%8A%E5%B0%8D%E8%A9%B1.mp3"></audio>
     <audio id="sfx-click" src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E9%81%B8%E9%A0%85.mp3"></audio>
     <audio id="sfx-scan" src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E6%8E%83%E6%8F%8F.mp3"></audio>
     <audio id="sfx-alarm" src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E8%A2%AB%E8%A5%B2%E6%93%8A%E9%A0%90%E5%91%8A.mp3"></audio>
     <audio id="sfx-jumpscare" src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E8%A5%B2%E6%93%8A.mp3"></audio>
+    <audio id="sfx-fail" src="https://file.garden/aWe99vhwaGcNwkok/%E7%B2%BE%E7%A5%9E%E7%97%85%E9%99%A2/BGM/%E3%83%93%E3%83%BC%E3%83%97%E9%9F%B35.mp3"></audio>
 
     <script>
         // --- ASSETS ---
@@ -431,16 +522,60 @@
             }
         };
 
-        // --- DATA ---
+        // --- GAME DATA ---
+        let currentDay = 1;
+        let unlockedDays = 1;
+
         let patients = [
-            { id: 'philippos', name: '腓力', img: assets.philippos, stress: 0, fixed: false, unlockedKey: null, lines: ["有刺客！", "少主...危險！", "我的劍呢！", "妖道！", "護駕！"] },
-            { id: 'lanlan', name: '蘭蘭', img: assets.lanlan, stress: 0, fixed: false, unlockedKey: null, lines: ["好黑...", "有鬼！", "別抓我！", "我要燒了這裡！", "嗚嗚嗚..."] },
-            { id: 'peter', name: '彼得', img: assets.peter, stress: 0, fixed: false, unlockedKey: null, lines: ["好癢...", "別看我！", "滿月了...", "怪物要出來了！", "嘶...好痛..."] }
+            { 
+                id: 'philippos', name: '腓力', img: assets.philippos, stress: 0, fixed: false, unlockedKey: null, 
+                profile: "性別：男\n身高：181cm\n身分：保母 / 拿但業的隨從\n症狀：武俠妄想",
+                linesDay1: ["有刺客！", "少主...危險！", "我的劍呢！", "妖道！", "護駕！"],
+                linesDay2: ["這裡是...廚房嗎？", "荔枝肉...要焦了...", "少主會餓的...", "不是妖塔...是醫院？", "頭好痛..."],
+                linesDay3: ["少主...別走...", "好吵...", "我守得住...", "別過來！", "血..."],
+                linesDay4: ["全是騙局...", "這裡就是戰場！", "殺！殺！殺！", "別想騙我...", "我要帶少主走！"],
+                fakeLines: ["救命...", "看這邊...", "嘻嘻...", "騙你的...", "...", "你在看嗎？", "找不到我...", "去死吧..."]
+            },
+            { 
+                id: 'lanlan', name: '蘭蘭', img: assets.lanlan, stress: 0, fixed: false, unlockedKey: null, 
+                profile: "性別：男\n身高：191cm\n身分：走私船船員 / 龍族\n症狀：恐怖片妄想",
+                linesDay1: ["好黑...", "有鬼！", "別抓我！", "我要燒了這裡！", "嗚嗚嗚..."],
+                linesDay2: ["喬諾娜...在哪裡？", "不買了...不買了...", "燈亮一點...", "沒有鬼...對吧？", "蘭蘭會乖..."],
+                linesDay3: ["我不弱...", "寶藏是我的...", "別看我...", "燒掉...", "嗚..."],
+                linesDay4: ["別過來！", "火...更多的火...", "燒死你們...", "喬諾娜是我的！", "滾開！"],
+                fakeLines: ["救命...", "看這邊...", "嘻嘻...", "騙你的...", "...", "你在看嗎？", "找不到我...", "去死吧..."]
+            },
+            { 
+                id: 'peter', name: '彼得', img: assets.peter, stress: 0, fixed: false, unlockedKey: null, 
+                profile: "性別：男\n身高：185cm\n身分：國王 / 教徒\n症狀：肉體恐怖與變異妄想",
+                linesDay1: ["好癢...", "別看我！", "滿月了...", "怪物要出來了！", "嘶...好痛..."],
+                linesDay2: ["林恩...救我...", "吉祥...要吉祥...", "貼紙...貼好了...", "不是怪物...是過敏...", "好想吐..."],
+                linesDay3: ["髒...", "不完美...", "我是王...", "閉嘴...", "撕掉..."],
+                linesDay4: ["騙子...", "撕下來...", "皮下面有東西...", "林恩...救我...", "好癢啊啊啊！"],
+                fakeLines: ["救命...", "看這邊...", "嘻嘻...", "騙你的...", "...", "你在看嗎？", "找不到我...", "去死吧..."]
+            }
         ];
+
+        // Day 2 Puzzles
+        const puzzleData = {
+            philippos: {
+                correct: ["少主", "荔枝肉", "聽話"],
+                decoys: ["魔教", "妖塔", "殺", "下蠱", "花瓶"]
+            },
+            lanlan: {
+                correct: ["喬諾娜", "買", "亮亮的"],
+                decoys: ["鬼", "黑暗", "燒", "影子", "龍息"]
+            },
+            peter: {
+                correct: ["林恩", "吉祥", "符咒"],
+                decoys: ["怪物", "中邪", "癢", "滿月", "撕皮"]
+            }
+        };
 
         let state = {
             currentPIndex: 0,
             keywords: [],
+            // Dialogue
             pages: [],
             pageIndex: 0,
             isTyping: false,
@@ -449,6 +584,7 @@
             currentOptions: [],
             currentCharId: null,
             scanData: null,
+            // Night
             currentCam: 0,
             power: 100,
             time: 0, 
@@ -456,29 +592,155 @@
             broadcastUses: 2,
             isJammed: false,
             intervals: [],
-            bubbleTimer: null
+            sfxVolume: 1.0,
+            // Puzzle
+            puzzleSelection: [],
+            // Day 3 Wave
+            waveTarget: { freq: 0, amp: 0 },
+            waveCurrent: { freq: 50, amp: 50 },
+            waveAnim: null,
+            waveOffset: 0,
+            // Day 4 Hack
+            hackGrid: [],
+            hackTimer: 100,
+            hackBonus: false
         };
 
         const audio = {
             bgmDay: document.getElementById('bgm-day'),
+            bgmDay2: document.getElementById('bgm-day2'),
+            bgmDay3: document.getElementById('bgm-day3'),
+            bgmDay4: document.getElementById('bgm-day4'),
             bgmNight: document.getElementById('bgm-night'),
             sfxType: document.getElementById('sfx-type'),
             sfxClick: document.getElementById('sfx-click'),
             sfxScan: document.getElementById('sfx-scan'),
             sfxAlarm: document.getElementById('sfx-alarm'),
             sfxJump: document.getElementById('sfx-jumpscare'),
+            sfxFail: document.getElementById('sfx-fail'),
             playBGM: (type) => {
-                audio.bgmDay.pause(); audio.bgmNight.pause();
-                if(type === 'day') { audio.bgmDay.volume = 0.5; audio.bgmDay.play(); }
+                audio.bgmDay.pause(); audio.bgmDay2.pause(); audio.bgmDay3.pause(); audio.bgmDay4.pause(); audio.bgmNight.pause();
+                if(type === 'day') { 
+                    let track = audio.bgmDay;
+                    if(currentDay === 2) track = audio.bgmDay2;
+                    if(currentDay === 3) track = audio.bgmDay3;
+                    if(currentDay === 4) track = audio.bgmDay4;
+                    track.volume = 0.5; track.play(); 
+                }
                 if(type === 'night') { audio.bgmNight.volume = 0.6; audio.bgmNight.play(); }
             },
             playSFX: (id) => {
                 const sfx = document.getElementById(id);
+                sfx.volume = state.sfxVolume;
                 sfx.currentTime = 0;
                 sfx.play().catch(()=>{});
             }
         };
 
+        // --- AUDIO CONTEXT FOR STATIC (Day 3) ---
+        let audioCtx = null;
+        let staticNode = null;
+        let staticGain = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function startStaticNoise() {
+            initAudioContext();
+            if (staticNode) return; 
+
+            const bufferSize = audioCtx.sampleRate * 2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * 0.5; // White noise
+            }
+
+            staticNode = audioCtx.createBufferSource();
+            staticNode.buffer = buffer;
+            staticNode.loop = true;
+
+            staticGain = audioCtx.createGain();
+            staticGain.gain.value = 0;
+
+            staticNode.connect(staticGain);
+            staticGain.connect(audioCtx.destination);
+            staticNode.start();
+        }
+
+        function setStaticVolume(vol) {
+            if (staticGain) {
+                // Clamp volume between 0 and 0.15 to avoid being too loud
+                let v = Math.max(0, Math.min(0.15, vol));
+                staticGain.gain.setTargetAtTime(v, audioCtx.currentTime, 0.1);
+            }
+        }
+
+        function stopStaticNoise() {
+            if (staticGain) {
+                staticGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+                setTimeout(() => {
+                    if (staticNode) {
+                        staticNode.stop();
+                        staticNode.disconnect();
+                        staticNode = null;
+                    }
+                    if (staticGain) {
+                        staticGain.disconnect();
+                        staticGain = null;
+                    }
+                }, 200);
+            }
+        }
+
+        function playHackTone(index) {
+            initAudioContext();
+            const t = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            // Musical scale (Pentatonic C Minor-ish for sci-fi feel)
+            const scale = [261.63, 311.13, 349.23, 392.00, 466.16, 523.25]; 
+            const freq = scale[index % scale.length] * (1 + Math.floor(index / scale.length));
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, t);
+            
+            gain.gain.setValueAtTime(0.1, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.3);
+        }
+
+        function playZapSound() {
+            initAudioContext();
+            const t = audioCtx.currentTime;
+            
+            // Noise buffer for static
+            const bufferSize = audioCtx.sampleRate * 0.2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) { data[i] = (Math.random() * 2 - 1); }
+            
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.3, t);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+            noise.connect(noiseGain); noiseGain.connect(audioCtx.destination);
+            noise.start(t);
+        }
+
+        // --- SCRIPTS ---
         const hasselScript = [
             { 
                 speaker: "哈蘇", 
@@ -508,6 +770,117 @@
             }
         ];
 
+        const scriptsDay2 = {
+            philippos: [
+                { id: 0, speaker: "腓力", 
+                  pages: ["（扶著額頭，眼神有些渙散）", "這裡是哪裡...？廚房嗎？", "爐火呢...？"], 
+                  options: [{text:"這裡是醫院。", next:1}, {text:"你在找什麼？", next:1}] },
+                { id: 1, speaker: "腓力", 
+                  pages: ["醫院...？不，我不能待在這裡。", "我要去做飯...<span class='scannable'>少主</span>餓了會生氣的。", "拿但業少主...他還在等我。"], 
+                  scan: { key: "少主", label: "少主" },
+                  options: [{text:"你要做什麼菜？", next:2}] },
+                { id: 2, speaker: "腓力", 
+                  pages: ["<span class='scannable'>荔枝肉</span>...那是少主最愛吃的。", "酸酸甜甜的...火候很重要...", "我得趕快...不然少主會不高興。"], 
+                  scan: { key: "荔枝肉", label: "荔枝肉" },
+                  options: [{text:"你對他真好。", next:3}] },
+                { id: 3, speaker: "腓力", 
+                  pages: ["這是我的職責。", "少主說過，只要我<span class='scannable'>聽話</span>，他就不會趕我走。", "我要做個聽話的保母...聽話..."], 
+                  scan: { key: "聽話", label: "聽話" },
+                  options: [{text:"（關鍵詞似乎出現了，準備重組邏輯）", next:"start_puzzle"}] },
+                { id: "success", speaker: "腓力", pages: ["頭...不痛了。", "我要去煮飯了...少主還在等我。", "謝謝你...大夫。"], action: "next_level",
+                  options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "腓力", pages: ["啊啊啊！妖道！滾開！", "我的頭好痛！你們對我做了什麼！"], action: "next_level_fail",
+                  options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ],
+            lanlan: [
+                { id: 0, speaker: "蘭蘭", 
+                  pages: ["（四處張望，看起來很興奮）", "醫生！醫生！你有看到我的寶貝嗎？"], 
+                  options: [{text:"誰？", next:1}] },
+                { id: 1, speaker: "蘭蘭", 
+                  pages: ["<span class='scannable'>喬諾娜</span>呀！我的老婆！", "他長得超可愛的，粉紅色的頭髮...像櫻桃一樣！", "蘭蘭好想他呀..."], 
+                  scan: { key: "喬諾娜", label: "喬諾娜" },
+                  options: [{text:"他在休息。", next:2}] },
+                { id: 2, speaker: "蘭蘭", 
+                  pages: ["休息？那蘭蘭要去<span class='scannable'>買</span>禮物給他！", "買大鑽戒！買好吃的！", "只要是喬諾娜喜歡的，蘭蘭都買！"], 
+                  scan: { key: "買", label: "買" },
+                  options: [{text:"你有錢嗎？", next:3}] },
+                { id: 3, speaker: "蘭蘭", 
+                  pages: ["蘭蘭有錢！蘭蘭是龍呀！", "蘭蘭喜歡<span class='scannable'>亮亮的</span>東西，喬諾娜也喜歡！", "金幣...寶石...都要亮亮的！"], 
+                  scan: { key: "亮亮的", label: "亮亮的" },
+                  options: [{text:"（關鍵詞似乎出現了，準備重組邏輯）", next:"start_puzzle"}] },
+                { id: "success", speaker: "蘭蘭", pages: ["嘿嘿...買給喬諾娜...亮亮的...", "蘭蘭不燒了...蘭蘭要乖乖的..."], action: "next_level",
+                  options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "蘭蘭", pages: ["好黑...火...我要火...", "把這裡都燒掉！"], action: "next_level_fail",
+                  options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ],
+            peter: [
+                { id: 0, speaker: "彼得", 
+                  pages: ["（深呼吸，看起來比昨天平靜很多）", "呼...呼...感覺好多了。", "醫生，謝謝你。"], 
+                  options: [{text:"不客氣，你看起來很穩定。", next:1}] },
+                { id: 1, speaker: "彼得", 
+                  pages: ["是<span class='scannable'>林恩</span>...我的貓貓保佑了我。", "只要想到林恩，我就覺得很安心。", "他是我的幸運星。"], 
+                  scan: { key: "林恩", label: "林恩" },
+                  options: [{text:"貓？", next:2}] },
+                { id: 2, speaker: "彼得", 
+                  pages: ["對，靠近他就很<span class='scannable'>吉祥</span>。", "沒有髒東西敢靠近吉祥的人。", "我要保持吉祥...不能讓邪靈入侵。"], 
+                  scan: { key: "吉祥", label: "吉祥" },
+                  options: [{text:"你背後貼的是什麼？", next:3}] },
+                { id: 3, speaker: "彼得", 
+                  pages: ["這個？這是醫生給我的<span class='scannable'>符咒</span>呀。", "（指著背後的藥布）", "貼著它，體內的怪物就被封印了。", "真是強大的法力..."], 
+                  scan: { key: "符咒", label: "符咒" },
+                  options: [{text:"（關鍵詞似乎出現了，準備重組邏輯）", next:"start_puzzle"}] },
+                { id: "success", speaker: "彼得", pages: ["林恩...貓貓...好安心...", "怪物不會出來了..."], action: "next_level",
+                  options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "彼得", pages: ["怪物...在皮下面...癢...", "撕開...撕開就好了！"], action: "next_level_fail",
+                  options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ]
+        };
+
+        const scriptsDay3 = {
+            philippos: [
+                { id: 0, speaker: "腓力", pages: ["（抱著頭，渾身顫抖，眼神充滿血絲）", "好吵...聲音...殺伐聲...", "少主...你在哪裡..."], options: [{text:"深呼吸，這裡沒有戰場。", next:1}] },
+                { id: 1, speaker: "腓力", pages: ["不...你不懂...他們要來了...", "我必須...保護...少主...", "但我...我好怕..."], options: [{text:"（腦波極度混亂，準備進行頻率校準）", next:"start_puzzle"}] },
+                { id: "success", speaker: "腓力", pages: ["（呼吸平穩下來）", "聲音...消失了？", "我太焦慮了嗎...是啊，少主很安全...", "我不能自亂陣腳。"], action: "next_level", options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "腓力", pages: ["殺！！！", "（陷入狂暴狀態）"], action: "next_level_fail", options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ],
+            lanlan: [
+                { id: 0, speaker: "蘭蘭", pages: ["（縮在角落，忽大忽小的喘息）", "嗚...寶藏...我的寶藏...", "不要搶走..."], options: [{text:"沒人會搶你的東西。", next:1}] },
+                { id: 1, speaker: "蘭蘭", pages: ["騙人！大家都想要喬諾娜...", "蘭蘭不夠強...蘭蘭是壞龍...", "保護不了...嗚嗚..."], options: [{text:"（情緒波動劇烈，準備進行頻率校準）", next:"start_puzzle"}] },
+                { id: "success", speaker: "蘭蘭", pages: ["（擦乾眼淚）", "蘭蘭...是厲害的龍...", "喬諾娜喜歡蘭蘭...", "沒事的...沒事的..."], action: "next_level", options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "蘭蘭", pages: ["燒死你們！全部走開！"], action: "next_level_fail", options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ],
+            peter: [
+                { id: 0, speaker: "彼得", pages: ["（不斷地抓撓皮膚，發出嘶嘶聲）", "不夠完美...不夠乾淨...", "我是國王...不能有瑕疵..."], options: [{text:"你看起來很完美，彼得。", next:1}] },
+                { id: 1, speaker: "彼得", pages: ["謊言！雜訊...好多雜訊...", "必須撕掉...把髒東西撕掉...", "壓力...好重..."], options: [{text:"（思緒充滿雜訊，準備進行頻率校準）", next:"start_puzzle"}] },
+                { id: "success", speaker: "彼得", pages: ["（停下自殘的手）", "安靜了...", "我是國王...我能掌控...", "不需要撕開..."], action: "next_level", options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "彼得", pages: ["啊啊啊！把皮撕下來就安靜了！"], action: "next_level_fail", options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ]
+        };
+
+        const scriptsDay4 = {
+            philippos: [
+                { id: 0, speaker: "腓力", pages: ["（眼神兇狠，死死盯著你）", "別過來...妖道。", "我知道這是幻術...這裡是戰場！"], options: [{text:"這裡很安全，腓力。", next:1}, {text:"你在跟誰戰鬥？", next:1}] },
+                { id: 1, speaker: "腓力", pages: ["騙子！到處都是屍體...", "你聽不到嗎？那些慘叫聲...", "他們想包圍少主..."], options: [{text:"我只看到你一個人。", next:2}, {text:"我會幫你守住這裡。", next:2}] },
+                { id: 2, speaker: "腓力", pages: ["閉嘴！", "我聞到了...<span class='scannable'>血</span>的味道...", "你們想困住我...想害少主...", "我絕不會讓你們得逞！"], scan: { key: "Blood", label: "血腥味" }, options: [{text:"（精神防禦極高，準備駭入）", next:"start_puzzle"}] },
+                { id: "success", speaker: "腓力", pages: ["（喘著粗氣，眼神逐漸聚焦）", "不是...戰場？", "我的劍...不在...", "抱歉...我剛才...", "我得控制住自己..."], action: "next_level", options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "腓力", pages: ["殺！！！", "全部去死吧！"], action: "next_level_fail", options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ],
+            lanlan: [
+                { id: 0, speaker: "蘭蘭", pages: ["（周圍似乎有熱氣扭曲，他緊抱著自己）", "滾開！", "蘭蘭不需要你們！"], options: [{text:"冷靜點，會燒傷自己的。", next:1}, {text:"沒有人要傷害你。", next:1}] },
+                { id: 1, speaker: "蘭蘭", pages: ["騙人！黑暗裡有東西...", "只有光能驅散它們...", "蘭蘭要變成太陽！"], options: [{text:"那樣會把喬諾娜也燒傷的。", next:2}] },
+                { id: 2, speaker: "蘭蘭", pages: ["燒傷？哈哈哈！", "蘭蘭是龍！<span class='scannable'>火</span>是我的朋友！", "把你們都燒成灰...就沒人能搶走喬諾娜了！"], scan: { key: "Fire", label: "龍火" }, options: [{text:"（內心封閉，準備駭入）", next:"start_puzzle"}] },
+                { id: "success", speaker: "蘭蘭", pages: ["（火焰的幻覺消退）", "嗚...好燙...", "蘭蘭...差點燒了喬諾娜的照片...", "對不起...蘭蘭不乖..."], action: "next_level", options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "蘭蘭", pages: ["燃燒吧！全部毀滅！"], action: "next_level_fail", options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ],
+            peter: [
+                { id: 0, speaker: "彼得", pages: ["（瘋狂地撕扯著背後的藥布）", "騙子...都是騙子...", "這不是符咒...這是封印我的詛咒！"], options: [{text:"住手！那樣會受傷的！", next:1}, {text:"那是保護你的。", next:1}] },
+                { id: 1, speaker: "彼得", pages: ["保護？它在吸我的血...", "它在蠕動...好噁心...", "我要把它弄下來！"], options: [{text:"讓我幫你看看。", next:2}] },
+                { id: 2, speaker: "彼得", pages: ["受傷？不...這是解放！", "皮下面的<span class='scannable'>怪物</span>在叫...它餓了...", "你們都想害我...我是國王！沒人能命令我！"], scan: { key: "InnerMonster", label: "體內怪物" }, options: [{text:"（認知錯亂，準備駭入）", next:"start_puzzle"}] },
+                { id: "success", speaker: "彼得", pages: ["（停下動作，看著流血的手）", "血...", "我在做什麼...", "林恩會生氣的...", "醫生...幫幫我..."], action: "next_level", options: [{text: "前往下一位病患", next: "next_level"}] },
+                { id: "fail", speaker: "彼得", pages: ["撕開！撕開！出來吧怪物！"], action: "next_level_fail", options: [{text: "前往下一位病患", next: "next_level_fail"}] }
+            ]
+        };
+
         const scripts = {
             philippos: [
                 { id: 0, speaker: "腓力", 
@@ -518,7 +891,6 @@
                   pages: ["醫院？又是什麼邪門歪道？", "如果你們沒抓少主，為什麼要把我關在這個白色的牢房裡？", "甚至沒收了我的劍！你們肯定是想用我來威脅少主！"], 
                   options: [{text:"我們是在治療你。", next:2}, {text:"（沉默）", next:2}] },
 
-                // Conditional Scan Branch
                 { id: 10, speaker: "腓力",
                   pages: ["不是敵人？哼，那你為何穿著這身白袍？", "快把<span class='redacted'>少主</span>交出來！否則我踏平這座妖塔！"],
                   scan: { key: "ShaoZhu", label: "少主(拿但業)", text: "快把<span class='revealed'>少主(拿但業)</span>交出來！否則我踏平這座妖塔！" },
@@ -552,7 +924,6 @@
                   pages: ["騙人！角落黑黑的，它們在看我！", "醫生看不到嗎？就在那裡！", "（指著牆角的陰影）"],
                   options: [{text:"那裡什麼都沒有。", next:2}, {text:"我們把燈開到最亮好不好？", next:2}] },
                 
-                // Conditional Scan Branch
                 { id: 10, speaker: "蘭蘭",
                   pages: ["影子...影子裡有<span class='redacted'>鬼</span>...", "蘭蘭要把這裡全燒光！只要有火，鬼就不敢出來了！"],
                   scan: { key: "Ghost", label: "怕鬼", text: "影子裡有<span class='revealed'>鬼</span>..." },
@@ -576,7 +947,6 @@
                   pages: ["別靠近我！會傳染的！", "它在動...它想鑽出來...", "快殺了我，趁我還沒變成怪物！快啊！"],
                   options: [{text:"冷靜點，那只是普通的過敏。", next:2}] },
 
-                 // Conditional Scan Branch
                 { id: 10, speaker: "彼得",
                   pages: ["我感覺身體裡的<span class='redacted'>怪物</span>要出來了...", "我也許該把這層皮撕下來..."],
                   scan: { key: "Monster", label: "中邪/變異", text: "身體裡的<span class='revealed'>怪物(中邪)</span>要出來了..." },
@@ -594,18 +964,67 @@
             ]
         };
 
+        // --- CORE FUNCTIONS ---
         function switchScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
             // Files button visibility
-            if(id === 'screen-title' || id === 'screen-prologue') {
+            if(id === 'screen-title' || id === 'screen-prologue' || id === 'screen-night') {
                 document.getElementById('btn-files').style.display = 'none';
+                document.getElementById('btn-chapter').style.display = 'none';
+                document.getElementById('btn-settings').style.display = 'none';
             } else {
                 document.getElementById('btn-files').style.display = 'block';
+                document.getElementById('btn-chapter').style.display = 'block';
+                document.getElementById('btn-settings').style.display = 'block';
             }
         }
 
+        // --- SETTINGS ---
+        function toggleSettings() {
+            const modal = document.getElementById('modal-settings');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+        function setVolume(type, val) {
+            if(type === 'bgm') { audio.bgmDay.volume = val; audio.bgmDay2.volume = val; audio.bgmDay3.volume = val; audio.bgmDay4.volume = val; audio.bgmNight.volume = val; }
+            else { state.sfxVolume = val; }
+        }
+        function addToLog(speaker, text) {
+            const c = document.getElementById('log-container');
+            const div = document.createElement('div'); div.className = 'log-entry';
+            div.innerHTML = `<span class="log-speaker">${speaker}:</span> ${text}`;
+            c.appendChild(div); c.scrollTop = c.scrollHeight;
+        }
+
+        // --- TITLE & CHAPTERS ---
+        function toggleChapters() {
+            const modal = document.getElementById('modal-chapters');
+            if(modal.style.display === 'flex') modal.style.display = 'none';
+            else {
+                updateChapterUI();
+                modal.style.display = 'flex';
+            }
+        }
+
+        function updateChapterUI() {
+            if(unlockedDays >= 2) document.getElementById('chap-day2').classList.remove('locked');
+            if(unlockedDays >= 3) document.getElementById('chap-day3').classList.remove('locked');
+            if(unlockedDays >= 4) document.getElementById('chap-day4').classList.remove('locked');
+        }
+
+        function loadChapter(day) {
+            document.getElementById('modal-chapters').style.display = 'none';
+            currentDay = day;
+            patients.forEach(p => { p.stress = 50; p.fixed = false; });
+            state.currentPIndex = 0;
+            state.keywords = [];
+            
+            if(day === 1) startDayLevel();
+            else startDayLevel(); // Logic handles Day 2 inside
+        }
+
+        // --- PROLOGUE ---
         function startPrologue() {
             switchScreen('screen-prologue');
             audio.playBGM('day');
@@ -614,12 +1033,12 @@
                 setTimeout(startBriefing, 2500); 
             });
         }
-
         function skipPrologue() {
             if(state.typeInterval) clearInterval(state.typeInterval);
             startBriefing();
         }
 
+        // --- BRIEFING ---
         let briefingIndex = 0;
         function startBriefing() {
             switchScreen('screen-day'); 
@@ -629,6 +1048,8 @@
             img.className = 'char-portrait active';
             
             document.getElementById('btn-scan').style.display = 'none';
+            document.getElementById('dialogue-box').style.display = 'flex';
+            document.getElementById('puzzle-area').style.display = 'none';
             briefingIndex = 0;
             loadBriefing();
         }
@@ -647,48 +1068,49 @@
             startTypewriter();
         }
 
-        function nextBriefingStep() {
-            briefingIndex++;
-            loadBriefing();
-        }
+        function nextBriefingStep() { briefingIndex++; loadBriefing(); }
 
+        // --- TRANSITION ---
         function nextPatientTransition(callback) {
             const overlay = document.getElementById('transition-layer');
             const fill = document.getElementById('loading-fill');
-            const text = document.getElementById('loading-text');
-            
             overlay.classList.add('active');
-            text.classList.add('anim');
-            
-            fill.style.transition = 'none';
-            fill.style.width = '0%';
-            void fill.offsetWidth; 
+            fill.style.transition = 'none'; fill.style.width = '0%'; void fill.offsetWidth; 
             fill.style.transition = 'width 1.5s ease-in-out';
-            
             audio.playSFX('sfx-scan');
             setTimeout(() => { fill.style.width = '100%'; }, 50);
-            
             setTimeout(() => {
                 callback();
-                setTimeout(() => {
-                    overlay.classList.remove('active');
-                    text.classList.remove('anim');
-                }, 500);
+                setTimeout(() => { overlay.classList.remove('active'); }, 500);
             }, 1500);
         }
 
         function startGame() {
-            state.currentPIndex = 0;
-            state.keywords = [];
-            patients.forEach(p => { p.stress = 50; p.fixed = false; p.unlockedKey = null; });
+            currentDay = 1; // Default
+            patients.forEach(p => { p.stress = 50; p.fixed = false; p.unlockedKey = null; p.unlockedLogic = null; });
             startDayLevel();
         }
 
+        // Generic Typewriter (Fixed: Missing Function)
+        function typeWriter(text, element, callback) {
+            if(state.typeInterval) clearInterval(state.typeInterval);
+            element.innerHTML = "";
+            let i = 0;
+            state.typeInterval = setInterval(() => {
+                element.innerHTML += text.charAt(i);
+                i++;
+                if (i >= text.length) {
+                    clearInterval(state.typeInterval);
+                    if (callback) callback();
+                }
+            }, 30);
+        }
+
+        // --- TYPEWRITER ---
         function startTypewriter() {
             const textBox = document.getElementById('day-text');
             const choicesBox = document.getElementById('day-choices');
             const nextIcon = document.getElementById('next-icon');
-
             choicesBox.classList.remove('show');
             nextIcon.classList.remove('show');
             
@@ -701,33 +1123,25 @@
             clearInterval(state.typeInterval);
             
             state.typeInterval = setInterval(() => {
-                if (i >= textToType.length) {
-                    finishTyping();
-                    return;
-                }
+                if (i >= textToType.length) { finishTyping(); return; }
                 if (textToType[i] === '<') {
                     let close = textToType.indexOf('>', i);
                     if (close !== -1) {
                         if(textToType[i+1] === '/') {
-                             textBox.innerHTML += textToType.substring(i, close+1);
-                             i = close + 1;
+                             textBox.innerHTML += textToType.substring(i, close+1); i = close + 1;
                         } else {
                             if(textToType.substring(i, i+21).includes("redacted")) {
                                 let spanEnd = textToType.indexOf('</span>', i);
                                 if(spanEnd !== -1) {
                                     textBox.innerHTML += textToType.substring(i, spanEnd + 7);
-                                    i = spanEnd + 7;
-                                    return; 
+                                    i = spanEnd + 7; return; 
                                 }
                             }
-                            textBox.innerHTML += textToType.substring(i, close+1);
-                            i = close + 1;
-                            return;
+                            textBox.innerHTML += textToType.substring(i, close+1); i = close + 1; return;
                         }
                     }
                 }
-                textBox.innerHTML += textToType.charAt(i);
-                i++;
+                textBox.innerHTML += textToType.charAt(i); i++;
                 if(i % 2 === 0) audio.playSFX('sfx-type');
             }, 30);
         }
@@ -736,26 +1150,40 @@
             clearInterval(state.typeInterval);
             state.isTyping = false;
             document.getElementById('day-text').innerHTML = state.fullText; 
-            
-            if (state.pageIndex >= state.pages.length - 1) {
-                renderChoices();
-            } else {
-                document.getElementById('next-icon').classList.add('show');
-            }
+            // Log
+            addToLog(document.getElementById('day-speaker').innerText, state.fullText.replace(/<[^>]*>/g, ''));
+            if (state.pageIndex >= state.pages.length - 1) renderChoices();
+            else document.getElementById('next-icon').classList.add('show');
         }
 
         function handleInput() {
-            if (state.isTyping) {
-                finishTyping(); 
-            } else {
-                if (state.pageIndex < state.pages.length - 1) {
-                    state.pageIndex++;
-                    setupScanButton(); 
-                    startTypewriter();
-                }
+            if (state.isTyping) finishTyping(); 
+            else if (state.pageIndex < state.pages.length - 1) {
+                state.pageIndex++;
+                setupScanButton(); 
+                startTypewriter();
             }
         }
 
+        // --- SYSTEM MESSAGE ---
+        function showSystemMessage(title, content, type, callback) {
+            const modal = document.getElementById('modal-system-msg');
+            const box = document.getElementById('sys-msg-box');
+            const t = document.getElementById('sys-msg-title');
+            const c = document.getElementById('sys-msg-content');
+            const btn = document.getElementById('sys-msg-btn');
+
+            t.innerText = title; c.innerHTML = content;
+            box.className = 'system-msg-box ' + (type === 'success' ? 'success' : '');
+            
+            modal.style.display = 'flex';
+            btn.onclick = () => {
+                modal.style.display = 'none';
+                if(callback) callback();
+            };
+        }
+
+        // --- DAY SHIFT LOGIC ---
         function startDayLevel() {
             if (state.currentPIndex >= patients.length) {
                 showReport();
@@ -769,32 +1197,54 @@
                 
                 let p = patients[state.currentPIndex];
                 const img = document.getElementById('day-portrait');
+                img.classList.remove('active', 'enter-anim');
+                void img.offsetWidth; // trigger reflow
                 img.src = p.img.normal;
-                img.className = 'char-portrait';
-                img.style.transform = ''; // Clear inline
-                void img.offsetWidth; 
-                setTimeout(() => {
-                    img.classList.add('active');
-                    if(!p.fixed) img.classList.add('glitch-static');
-                }, 100);
-
+                img.className = 'char-portrait active enter-anim'; 
+                
+                // Both days now start with dialogue
+                document.getElementById('dialogue-box').style.display = 'flex';
+                document.getElementById('puzzle-area').style.display = 'none';
+                document.getElementById('frequency-area').style.display = 'none';
+                document.getElementById('hacking-area').style.display = 'none';
+                if(!p.fixed) img.classList.add('glitch-static');
                 loadDialogue(p.id, 0);
             });
         }
 
+        // --- DAY 1 DIALOGUE ---
         function loadDialogue(charId, dialogId) {
-            if(dialogId === "next_brief") {
-                nextBriefingStep();
+            if(dialogId === "next_brief") { nextBriefingStep(); return; }
+            if (dialogId === "end") { state.currentPIndex++; startDayLevel(); return; }
+            if (dialogId === "next_level") { state.currentPIndex++; startDayLevel(); return; }
+            if (dialogId === "next_level_fail") { state.currentPIndex++; startDayLevel(); return; }
+            
+            // Puzzle Triggers
+            if (dialogId === "start_puzzle") {
+                document.getElementById('dialogue-box').style.display = 'none';
+                if (currentDay === 2) {
+                    const pArea = document.getElementById('puzzle-area');
+                    pArea.style.display = 'flex';
+                    pArea.classList.add('active');
+                    startDay2Puzzle(state.currentCharId);
+                } else if (currentDay === 3) {
+                    const fArea = document.getElementById('frequency-area');
+                    fArea.style.display = 'flex';
+                    fArea.classList.add('active');
+                    startDay3Puzzle(state.currentCharId);
+                } else if (currentDay === 4) {
+                    const hArea = document.getElementById('hacking-area');
+                    hArea.style.display = 'flex';
+                    hArea.classList.add('active');
+                    startDay4Puzzle(state.currentCharId);
+                }
                 return;
             }
 
-            if (dialogId === "end") {
-                state.currentPIndex++;
-                startDayLevel();
-                return;
-            }
-
-            const data = scripts[charId].find(d => d.id === dialogId);
+            // Select script based on day
+            let source = (currentDay === 1) ? scripts : (currentDay === 2 ? scriptsDay2 : (currentDay === 3 ? scriptsDay3 : scriptsDay4));
+            const data = source[charId].find(d => d.id === dialogId);
+            
             state.currentCharId = charId;
             state.pages = data.pages;
             state.pageIndex = 0;
@@ -802,7 +1252,6 @@
             state.scanData = data.scan; 
 
             document.getElementById('day-speaker').innerText = data.speaker;
-            
             const img = document.getElementById('day-portrait');
             if (data.action === 'fail') {
                 img.classList.add('glitch-heavy');
@@ -816,183 +1265,586 @@
                 patients[state.currentPIndex].stress = 10; 
                 patients[state.currentPIndex].fixed = true;
             }
-
             setupScanButton();
             startTypewriter();
         }
 
         function setupScanButton() {
             const scanBtn = document.getElementById('btn-scan');
+            scanBtn.classList.remove('locked'); // Always active visually
+
             let currentPageText = state.pages[state.pageIndex];
-            // Strict Scan: Check if current page text has redaction
-            let pageHasRedaction = currentPageText.includes("redacted");
+            let pageHasRedaction = currentPageText.includes("class='redacted'");
+            let pageHasScannable = currentPageText.includes("class='scannable'");
 
-            if (state.scanData && pageHasRedaction) {
-                if (state.keywords.includes(state.scanData.key)) {
-                    state.pages = state.pages.map(p => p.replace(/<span class='redacted'>.*?<\/span>/, state.scanData.text));
-                    scanBtn.classList.add('locked');
-                } else {
-                    scanBtn.classList.remove('locked');
-                    scanBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        // Full screen shake
-                        document.body.classList.add('shake-screen');
-                        setTimeout(() => document.body.classList.remove('shake-screen'), 500);
-
-                        audio.playSFX('sfx-scan');
-                        state.keywords.push(state.scanData.key);
-                        
-                        // Record unlocked keyword for file
-                        patients[state.currentPIndex].unlockedKey = state.scanData.label;
-
-                        showNotif(state.scanData.label);
-                        
-                        let newText = state.fullText.replace(/class='redacted'/, "class='redacted revealed'").replace(/<span class='redacted'>.*?<\/span>/, state.scanData.text);
-                        state.fullText = newText;
-                        document.getElementById('day-text').innerHTML = newText;
-                        state.pages[state.pageIndex] = newText;
-
-                        if(!state.isTyping && state.pageIndex === state.pages.length - 1) {
-                            renderChoices();
-                        }
-                        scanBtn.classList.add('locked');
-                    };
-                }
-            } else {
-                scanBtn.classList.add('locked');
-                scanBtn.onclick = null;
+            // Auto-reveal if already known (Day 1)
+            if (state.scanData && pageHasRedaction && state.keywords.includes(state.scanData.key)) {
+                state.pages = state.pages.map(p => p.replace(/<span class='redacted'>.*?<\/span>/, state.scanData.text).replace(/class='redacted'/, "class='redacted revealed'"));
             }
+
+            scanBtn.onclick = (e) => {
+                e.stopPropagation();
+                
+                const textBox = document.getElementById('day-text');
+                // 使用 querySelector 檢查元素是否存在，避免引號格式問題
+                const redactedEl = textBox.querySelector('.redacted');
+                const scannableEl = textBox.querySelector('.scannable');
+                const revealedEl = textBox.querySelector('.revealed');
+                const highlightedEl = textBox.querySelector('.keyword-highlight');
+
+                if (!state.scanData) { audio.playSFX('sfx-fail'); return; }
+
+                if (redactedEl && !revealedEl) {
+                    // Day 1 Scan
+                    document.body.classList.add('shake-screen');
+                    setTimeout(() => document.body.classList.remove('shake-screen'), 500);
+                    audio.playSFX('sfx-scan');
+                    state.keywords.push(state.scanData.key);
+                    patients[state.currentPIndex].unlockedKey = state.scanData.label;
+                    showNotif(state.scanData.label);
+                    
+                    // 直接使用 scanData.text 替換整段文字，避免正則表達式錯誤
+                    let newText = state.scanData.text;
+                    state.fullText = newText;
+                    document.getElementById('day-text').innerHTML = newText;
+                    state.pages[state.pageIndex] = newText;
+
+                    if(!state.isTyping && state.pageIndex === state.pages.length - 1) renderChoices();
+                } else if (scannableEl && !highlightedEl) {
+                    // Day 2 Scan
+                    audio.playSFX('sfx-scan');
+                    
+                    if(state.scanData.key && !state.keywords.includes(state.scanData.key)) {
+                        state.keywords.push(state.scanData.key);
+                    }
+                    showNotif(state.scanData.label || "KEYWORD FOUND");
+                    
+                    // 使用正則表達式替換 class，確保兼容單雙引號
+                    let newText = state.fullText.replace(/class=['"]scannable['"]/, "class='keyword-highlight'");
+                    state.fullText = newText;
+                    document.getElementById('day-text').innerHTML = newText;
+                    state.pages[state.pageIndex] = newText;
+                } else {
+                    audio.playSFX('sfx-fail');
+                }
+            };
         }
 
         function renderChoices() {
             if(document.getElementById('day-speaker').innerText === '哈蘇' && briefingIndex < hasselScript.length) {
-                 const box = document.getElementById('day-choices');
-                 box.innerHTML = '';
-                 box.classList.add('show');
-                 let btn = document.createElement('button');
-                 btn.className = 'choice-btn';
-                 btn.innerText = "> [點擊繼續]";
+                 const box = document.getElementById('day-choices'); box.innerHTML = ''; box.classList.add('show');
+                 let btn = document.createElement('button'); btn.className = 'choice-btn'; btn.innerText = "> [點擊繼續]";
                  btn.onclick = (e) => { e.stopPropagation(); nextBriefingStep(); };
-                 box.appendChild(btn);
-                 document.getElementById('next-icon').classList.remove('show');
-                 return;
+                 box.appendChild(btn); document.getElementById('next-icon').classList.remove('show'); return;
             }
 
-            const box = document.getElementById('day-choices');
-            box.innerHTML = '';
-            box.classList.add('show');
+            const box = document.getElementById('day-choices'); box.innerHTML = ''; box.classList.add('show');
             document.getElementById('next-icon').classList.remove('show');
 
             state.currentOptions.forEach(opt => {
                 if (opt.req && !state.keywords.includes(opt.req)) return;
-                
-                let btn = document.createElement('button');
-                btn.className = 'choice-btn';
+                let btn = document.createElement('button'); btn.className = 'choice-btn';
                 if (opt.unlock) btn.classList.add('key-unlock');
                 btn.innerText = `> ${opt.text}`;
-                btn.onclick = (e) => {
-                    e.stopPropagation();
-                    audio.playSFX('sfx-click');
-                    loadDialogue(state.currentCharId, opt.next);
-                };
+                btn.onclick = (e) => { e.stopPropagation(); audio.playSFX('sfx-click'); loadDialogue(state.currentCharId, opt.next); };
                 box.appendChild(btn);
             });
         }
 
+        // --- DAY 2: PUZZLE ---
+        function startDay2Puzzle(charId) {
+            state.puzzleSelection = [];
+            const puzzle = puzzleData[charId];
+            const allWords = [...puzzle.correct, ...puzzle.decoys].sort(() => Math.random() - 0.5);
+            
+            const cloud = document.getElementById('word-cloud');
+            cloud.innerHTML = '';
+            document.getElementById('puzzle-slots').innerHTML = '';
+
+            allWords.forEach(word => {
+                let bit = document.createElement('div');
+                bit.className = 'word-bit';
+                bit.innerText = word;
+                bit.onclick = () => selectWord(bit, word);
+                cloud.appendChild(bit);
+            });
+        }
+
+        function selectWord(el, word) {
+            if(state.puzzleSelection.includes(word)) {
+                // Deselect
+                state.puzzleSelection = state.puzzleSelection.filter(w => w !== word);
+                el.classList.remove('selected');
+                updatePuzzleSlots();
+                return;
+            }
+            if(state.puzzleSelection.length >= 3) return;
+            
+            audio.playSFX('sfx-click');
+            state.puzzleSelection.push(word);
+            el.classList.add('selected');
+            updatePuzzleSlots();
+        }
+
+        function updatePuzzleSlots() {
+            const slots = document.getElementById('puzzle-slots');
+            slots.innerHTML = '';
+            state.puzzleSelection.forEach(w => {
+                let s = document.createElement('div'); s.className = 'slot'; s.innerText = w;
+                slots.appendChild(s);
+            });
+        }
+
+        function submitPuzzle() {
+            let p = patients[state.currentPIndex];
+            let puzzle = puzzleData[p.id];
+            let correctCount = state.puzzleSelection.filter(w => puzzle.correct.includes(w)).length;
+            
+            if(correctCount === 3) {
+                audio.playSFX('sfx-scan');
+                document.getElementById('day-portrait').classList.add('effect-cured');
+                p.stress = 10; p.fixed = true;
+                p.unlockedLogic = puzzle.correct.join(" + ");
+                
+                showSystemMessage("COGNITIVE RECONSTRUCTION", "邏輯重構成功。<br>對象狀態：穩定。", "success", () => {
+                    document.getElementById('puzzle-area').style.display = 'none';
+                    document.getElementById('puzzle-area').classList.remove('active');
+                    document.getElementById('dialogue-box').style.display = 'flex';
+                    loadDialogue(p.id, "success");
+                });
+            } else {
+                audio.playSFX('sfx-alarm');
+                document.getElementById('day-portrait').classList.add('glitch-heavy');
+                p.stress = 90; p.fixed = false;
+                
+                showSystemMessage("CRITICAL FAILURE", "邏輯重構失敗。<br>對象狀態：極不穩定。", "fail", () => {
+                    document.getElementById('puzzle-area').style.display = 'none';
+                    document.getElementById('puzzle-area').classList.remove('active');
+                    document.getElementById('dialogue-box').style.display = 'flex';
+                    loadDialogue(p.id, "fail");
+                });
+            }
+        }
+
+        // --- DAY 3: FREQUENCY TUNING ---
+        function startDay3Puzzle(charId) {
+            // Randomize target based on character traits roughly
+            // Philippos: High Freq (Anxiety)
+            // Lanlan: High Amp (Fear)
+            // Peter: Noisy (High Freq + Amp)
+            state.waveTarget.freq = 20 + Math.floor(Math.random() * 60);
+            state.waveTarget.amp = 20 + Math.floor(Math.random() * 60);
+            
+            // Reset sliders
+            document.getElementById('slider-freq').value = 50;
+            document.getElementById('slider-amp').value = 50;
+            
+            if(state.waveAnim) cancelAnimationFrame(state.waveAnim);
+            startStaticNoise();
+            updateWaveform();
+        }
+
+        function updateWaveform() {
+            const canvas = document.getElementById('wave-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            const w = canvas.width;
+            const h = canvas.height;
+            const cy = h / 2;
+
+            // Get current values
+            state.waveCurrent.freq = parseInt(document.getElementById('slider-freq').value);
+            state.waveCurrent.amp = parseInt(document.getElementById('slider-amp').value);
+
+            // Clear
+            ctx.fillStyle = '#001';
+            ctx.fillRect(0, 0, w, h);
+
+            // Day 3 Visual Feedback
+            let diffFreq = Math.abs(state.waveCurrent.freq - state.waveTarget.freq);
+            let diffAmp = Math.abs(state.waveCurrent.amp - state.waveTarget.amp);
+            let totalDiff = diffFreq + diffAmp;
+            
+            // Audio Feedback: Closer = Quieter
+            setStaticVolume(totalDiff / 300);
+            
+            // Hue Rotate Background
+            document.getElementById('frequency-area').style.backdropFilter = `hue-rotate(${state.waveCurrent.freq * 3.6}deg)`;
+            
+            // Portrait Blur & Glitch
+            const img = document.getElementById('day-portrait');
+            let blurAmount = Math.min(20, totalDiff / 5);
+            
+            if (totalDiff > 40) {
+                // High difference: Strong Glitch effects
+                let chance = (totalDiff - 40) / 100; // Increase chance with diff
+                if (Math.random() < chance) {
+                    img.src = patients[state.currentPIndex].img.crazy;
+                    // Random filters for chaos
+                    let invert = Math.random() > 0.5 ? 1 : 0;
+                    let hue = Math.floor(Math.random() * 360);
+                    img.style.filter = `blur(${blurAmount}px) invert(${invert}) hue-rotate(${hue}deg) contrast(1.5)`;
+                    // Shake
+                    let x = (Math.random() - 0.5) * 20;
+                    let y = (Math.random() - 0.5) * 20;
+                    img.style.transform = `scale(1.25) translate(${x}px, ${y}px)`;
+                } else {
+                    img.src = patients[state.currentPIndex].img.normal;
+                    img.style.filter = `blur(${blurAmount}px) grayscale(1)`;
+                    img.style.transform = `scale(1.18) translateY(15%)`;
+                }
+            } else {
+                img.src = patients[state.currentPIndex].img.normal;
+                // Low difference: Clearer
+                if (totalDiff < 15) {
+                    img.style.filter = `blur(${blurAmount}px) drop-shadow(0 0 15px var(--neon-cyan)) brightness(1.1)`;
+                } else {
+                    img.style.filter = `blur(${blurAmount}px)`;
+                }
+                img.style.transform = `scale(1.18) translateY(15%)`;
+            }
+
+            state.waveOffset += 0.1;
+
+            // Draw Target (Blue)
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.5)';
+            ctx.lineWidth = 2;
+            for(let x = 0; x < w; x++) {
+                let y = cy + Math.sin((x * 0.01 * (state.waveTarget.freq/20)) + state.waveOffset) * (state.waveTarget.amp);
+                if(x===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw Patient (Red)
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 42, 42, 0.8)';
+            ctx.lineWidth = 2;
+            for(let x = 0; x < w; x++) {
+                let y = cy + Math.sin((x * 0.01 * (state.waveCurrent.freq/20)) + state.waveOffset) * (state.waveCurrent.amp);
+                if(x===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            state.waveAnim = requestAnimationFrame(updateWaveform);
+        }
+
+        function submitFrequency() {
+            let diffFreq = Math.abs(state.waveCurrent.freq - state.waveTarget.freq);
+            let diffAmp = Math.abs(state.waveCurrent.amp - state.waveTarget.amp);
+            let p = patients[state.currentPIndex];
+
+            if (diffFreq < 10 && diffAmp < 10) {
+                cancelAnimationFrame(state.waveAnim);
+                stopStaticNoise();
+                audio.playSFX('sfx-scan');
+                document.getElementById('day-portrait').classList.add('effect-cured');
+                p.stress = 10; p.fixed = true;
+                p.unlockedLogic = "SYNC: " + state.waveTarget.freq + "Hz / " + state.waveTarget.amp + "%";
+                showSystemMessage("SYNCHRONIZATION COMPLETE", "頻率同調成功。<br>潛意識壓力源已揭露。", "success", () => {
+                    document.getElementById('frequency-area').style.display = 'none';
+                    document.getElementById('frequency-area').classList.remove('active');
+                    document.getElementById('dialogue-box').style.display = 'flex';
+                    loadDialogue(p.id, "success");
+                });
+            } else {
+                cancelAnimationFrame(state.waveAnim);
+                stopStaticNoise();
+                audio.playSFX('sfx-alarm');
+                document.getElementById('day-portrait').classList.add('glitch-heavy');
+                p.stress = 90; p.fixed = false;
+                showSystemMessage("SYNC FAILURE", "頻率同調失敗。<br>腦波排斥反應強烈。", "fail", () => {
+                    document.getElementById('frequency-area').style.display = 'none';
+                    document.getElementById('frequency-area').classList.remove('active');
+                    document.getElementById('dialogue-box').style.display = 'flex';
+                    loadDialogue(p.id, "fail");
+                });
+            }
+        }
+
+        // --- DAY 4: MENTAL HACKING ---
+        function startDay4Puzzle(charId) {
+            // Check for bonus unlock
+            let bonusKey = "";
+            if(charId === 'philippos') bonusKey = "Blood";
+            if(charId === 'lanlan') bonusKey = "Fire";
+            if(charId === 'peter') bonusKey = "InnerMonster";
+            state.hackBonus = state.keywords.includes(bonusKey);
+
+            state.hackTimer = 100;
+            generateHackGrid();
+            if(state.intervals.hack) clearInterval(state.intervals.hack);
+            state.intervals.hack = setInterval(updateHackTimer, 100);
+        }
+
+        function generateHackGrid() {
+            const grid = document.getElementById('hack-grid');
+            grid.innerHTML = '';
+            state.hackGrid = [];
+            
+            let gridData = [];
+            for(let y=0; y<5; y++) {
+                for(let x=0; x<5; x++) {
+                    let type = 'empty';
+                    let hp = 0;
+                    let maxHp = 0;
+                    if(x===0 && y===0) type = 'start';
+                    else if(x===4 && y===4) type = 'end';
+                    else {
+                        // 3 Layers of Firewall at x=1, x=2, x=3
+                        if (x === 1 || x === 2 || x === 3) {
+                            type = 'defense';
+                            hp = 4; maxHp = 4; // Increased HP
+                            if (state.hackBonus && y === 2) { hp = 1; maxHp = 1; } // Weakened
+                        }
+                        // Random noise & Traps
+                        else {
+                            let r = Math.random();
+                            if (r < 0.1) { type = 'defense'; hp = 3; maxHp = 3; }
+                            else if (r < 0.25) { type = 'trap'; hp = 3; maxHp = 3; } // Hidden Trap
+                        }
+                    }
+                    gridData.push({x, y, type, hp, maxHp});
+                }
+            }
+            
+            // Render
+            gridData.forEach(n => {
+                let node = document.createElement('div');
+                node.className = `hack-node ${n.type}`;
+                if(n.type === 'trap' && state.hackBonus) node.classList.add('revealed');
+                if(n.type === 'start') node.classList.add('path');
+                node.dataset.x = n.x; node.dataset.y = n.y; node.dataset.type = n.type;
+                node.onclick = () => handleHackClick(n.x, n.y, node);
+                
+                if(n.type === 'defense') {
+                    node.innerHTML = '⚠️';
+                    node.dataset.hp = n.hp;
+                    node.style.opacity = 0.5 + (n.hp * 0.15);
+                }
+                if(n.type === 'trap' && state.hackBonus) node.innerHTML = '❓';
+
+                if(n.type === 'end') node.innerHTML = '🧠';
+                
+                grid.appendChild(node);
+                state.hackGrid.push({x: n.x, y: n.y, type: n.type, hp: n.hp, maxHp: n.maxHp, el: node, active: (n.type==='start')});
+            });
+        }
+
+        function handleHackClick(x, y, el) {
+            let node = state.hackGrid.find(n => n.x === x && n.y === y);
+            if(node.active) return; // Already active
+            
+            // Check adjacency to any active node
+            let adjacent = state.hackGrid.some(n => n.active && Math.abs(n.x - x) + Math.abs(n.y - y) === 1);
+            
+            if(adjacent) {
+                if(node.type === 'trap') {
+                    // Trigger Trap
+                    node.type = 'defense';
+                    el.className = 'hack-node defense';
+                    el.innerHTML = '⚠️';
+                    playZapSound();
+                    state.hackTimer -= 10; // Trap penalty
+                    el.classList.add('glitch-heavy');
+                    setTimeout(() => el.classList.remove('glitch-heavy'), 200);
+                    showWarning("TRAP ACTIVATED! -10s");
+                    return;
+                }
+
+                if(node.type === 'defense') {
+                    // Hit defense
+                    playZapSound();
+                    state.hackTimer -= 2; // Reduced click penalty
+                    node.hp--;
+                    
+                    el.classList.add('glitch-heavy');
+                    setTimeout(() => el.classList.remove('glitch-heavy'), 200);
+                    
+                    if (node.hp <= 0) {
+                        // Break it
+                        node.type = 'empty';
+                        el.className = 'hack-node empty';
+                        el.innerHTML = '';
+                    } else {
+                        // Update visual
+                        el.innerHTML = node.hp;
+                        el.style.opacity = 0.5 + (node.hp * 0.15);
+                        el.style.borderColor = `rgba(255, 42, 42, ${node.hp/4})`;
+                    }
+                    
+                    document.getElementById('day-portrait').src = patients[state.currentPIndex].img.crazy;
+                    setTimeout(() => {
+                        document.getElementById('day-portrait').src = patients[state.currentPIndex].img.normal;
+                    }, 200);
+                } else {
+                    // Valid move
+                    let pathLen = state.hackGrid.filter(n => n.active).length;
+                    playHackTone(pathLen);
+                    node.active = true;
+                    el.classList.add('path');
+                    
+                    if(node.type === 'end') {
+                        clearInterval(state.intervals.hack);
+                        audio.playSFX('sfx-scan');
+                        
+                        // Visual Effects
+                        state.hackGrid.forEach(n => {
+                            if(n.active) {
+                                let dist = n.x + n.y;
+                                n.el.style.animationDelay = `${dist * 0.05}s`;
+                                n.el.classList.add('success-flow');
+                            }
+                        });
+
+                        let p = patients[state.currentPIndex];
+                        p.stress = 10; p.fixed = true;
+                        showSystemMessage("HACKING SUCCESSFUL", "精神防火牆已突破。<br>認知阻斷解除。", "success", () => {
+                            document.getElementById('hacking-area').style.display = 'none';
+                            document.getElementById('hacking-area').classList.remove('active');
+                            document.getElementById('dialogue-box').style.display = 'flex';
+                            loadDialogue(p.id, "success");
+                        });
+                    }
+                }
+            }
+        }
+
+        function updateHackTimer() {
+            state.hackTimer -= 0.5;
+            document.getElementById('hack-timer').style.width = state.hackTimer + '%';
+            
+            // Regeneration Logic (Every ~1 second)
+            if (Math.floor(state.hackTimer * 10) % 50 === 0) {
+                state.hackGrid.forEach(n => {
+                    if (n.type === 'defense' && n.hp < n.maxHp && !n.active) {
+                        if (Math.random() < 0.3) { // 30% chance to regen
+                            n.hp++;
+                            if(n.hp >= n.maxHp) n.el.innerHTML = '⚠️';
+                            else n.el.innerHTML = n.hp;
+                            n.el.style.opacity = 0.5 + (n.hp * 0.15);
+                            n.el.style.borderColor = `rgba(255, 42, 42, ${n.hp/4})`;
+                        }
+                    }
+                });
+            }
+            
+            if(state.hackTimer <= 0) {
+                clearInterval(state.intervals.hack);
+                audio.playSFX('sfx-fail');
+                let p = patients[state.currentPIndex];
+                p.stress = 90; p.fixed = false;
+                showSystemMessage("CONNECTION LOST", "駭入失敗。<br>目標拒絕連線。", "fail", () => {
+                    document.getElementById('hacking-area').style.display = 'none';
+                    document.getElementById('hacking-area').classList.remove('active');
+                    document.getElementById('dialogue-box').style.display = 'flex';
+                    loadDialogue(p.id, "fail");
+                });
+            }
+        }
+
+        function resetHack() {
+            if(state.hackTimer <= 15) {
+                audio.playSFX('sfx-fail');
+                return;
+            }
+            state.hackTimer -= 15;
+            audio.playSFX('sfx-alarm');
+            generateHackGrid();
+        }
+
+        // --- INTERLUDE (Day 1 End) ---
+        function startHasselDebrief() {
+            switchScreen('screen-debrief');
+            // 哈蘇風格的台詞
+            let text = "";
+            let nextDay = currentDay + 1;
+            
+            if (currentDay === 1) {
+                text = "紀錄員：哈蘇。\n對象：拉扎爾先生。\n\n第一日監控事項，我有記。\n您做得不錯。\n\n這是您的報酬。請休息。\n系統正在存檔...邏輯重組程序準備中。";
+            } else if (currentDay === 2) {
+                text = "紀錄員：哈蘇。\n對象：拉扎爾先生。\n\n第二日邏輯重組，我有記。\n他們的情況比預期複雜。\n\n請休息。第三日將進行頻率校準。\n這會有點危險。";
+            } else if (currentDay === 3) {
+                text = "紀錄員：哈蘇。\n對象：拉扎爾先生。\n\n第三日頻率校準，我有記。\n潛意識的抵抗非常強烈。\n\n第四日將進行認知阻斷。\n請小心，他們可能會反擊。";
+            } else {
+                text = "紀錄員：哈蘇。\n對象：拉扎爾先生。\n\n今日監控結束。我有記。\n您辛苦了。";
+            }
+            
+            if (nextDay <= 4) {
+                localStorage.setItem('psycho_log_unlocked', nextDay);
+                unlockedDays = Math.max(unlockedDays, nextDay);
+            }
+            
+            typeWriter(text, document.getElementById('debrief-text'), () => {
+                updateChapterUI();
+                document.getElementById('btn-next-day').style.display = 'block';
+            });
+        }
+
+        function startNextDay() {
+            currentDay++;
+            patients.forEach(p => { p.stress = 50; p.fixed = false; });
+            state.currentPIndex = 0;
+            startDayLevel();
+        }
+
+        // --- NIGHT PHASE ---
         function showNotif(text) {
+            const n = document.getElementById('notif'); n.innerText = `ACQUIRED: ${text}`;
+            n.classList.add('show'); setTimeout(()=>n.classList.remove('show'), 2000);
+        }
+
+        function showWarning(text) {
             const n = document.getElementById('notif');
-            n.innerText = `ACQUIRED: ${text}`;
+            n.innerText = text;
+            n.style.borderColor = 'var(--neon-red)';
+            n.style.color = 'var(--neon-red)';
             n.classList.add('show');
-            setTimeout(()=>n.classList.remove('show'), 2000);
+            setTimeout(() => {
+                n.classList.remove('show');
+                setTimeout(() => { n.style.borderColor = 'var(--neon-green)'; n.style.color = 'var(--neon-green)'; }, 300);
+            }, 2000);
         }
 
         function showReport() {
             switchScreen('screen-report');
-            const list = document.getElementById('report-list');
-            list.innerHTML = '';
+            const list = document.getElementById('report-list'); list.innerHTML = '';
             patients.forEach(p => {
-                let status = p.fixed 
-                    ? "<span style='color:var(--neon-green)'>STABLE</span>" 
-                    : "<span style='color:var(--neon-red)'>CRITICAL</span>";
+                let status = p.fixed ? "<span style='color:var(--neon-green)'>STABLE</span>" : "<span style='color:var(--neon-red)'>CRITICAL</span>";
                 list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px dashed #333; padding-bottom:5px;"><span>${p.name}</span>${status}</div>`;
             });
         }
 
-        // --- FILES SYSTEM ---
-        function toggleFiles() {
-            const modal = document.getElementById('modal-files');
-            if(modal.style.display === 'flex') {
-                modal.style.display = 'none';
-            } else {
-                updateFilesList();
-                modal.style.display = 'flex';
-            }
-        }
-
-        function updateFilesList() {
-            const list = document.getElementById('files-list');
-            list.innerHTML = '';
-            patients.forEach(p => {
-                let statusClass = p.fixed ? 'stable' : '';
-                let statusText = p.fixed ? 'STABLE' : 'UNSTABLE';
-                let keyText = p.unlockedKey ? `<span>${p.unlockedKey}</span>` : '[未解鎖]';
-                
-                let div = document.createElement('div');
-                div.className = `patient-entry ${statusClass}`;
-                div.innerHTML = `
-                    <h3>${p.name}</h3>
-                    <div>STATUS: ${statusText}</div>
-                    <div class="keyword-box">KEYWORD: ${keyText}</div>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        // === NIGHT PHASE ===
         function startNight() {
             switchScreen('screen-night');
             document.getElementById('night-room-bg').style.backgroundImage = `url(${assets.bg.night})`;
             audio.playBGM('night');
-            state.power = 100;
-            state.time = 0; 
-            state.currentCam = 0;
-            state.sedativeUsed = false;
-            state.broadcastUses = 2;
-            state.isJammed = false;
+            state.power = 100; state.time = 0; state.currentCam = 0;
+            state.sedativeUsed = false; state.broadcastUses = 2; state.isJammed = false;
             document.getElementById('btn-sedative').disabled = false;
-            updateBroadcastBtn();
-            document.getElementById('jam-overlay').classList.remove('active');
+            updateBroadcastBtn(); document.getElementById('jam-overlay').classList.remove('active');
 
-            const deck = document.getElementById('cam-buttons');
-            deck.innerHTML = '';
+            const deck = document.getElementById('cam-buttons'); deck.innerHTML = '';
             patients.forEach((p, idx) => {
-                let btn = document.createElement('div');
-                btn.className = 'cam-btn';
-                btn.id = `cam-${idx}`;
+                let btn = document.createElement('div'); btn.className = 'cam-btn'; btn.id = `cam-${idx}`;
                 btn.onclick = () => setCam(idx);
                 btn.innerHTML = `<span>CAM 0${idx+1}</span><div class="stress-bar"><div class="stress-val" id="bar-${idx}"></div></div>`;
                 deck.appendChild(btn);
             });
-
             setCam(0);
-            
             state.intervals.forEach(clearInterval);
-            state.intervals = [
-                setInterval(gameLoop, 1000)
-            ];
+            state.intervals = [ setInterval(gameLoop, 1000) ];
             scheduleNextEvent(); 
         }
 
-        // Dynamic Frequency Logic (Harder)
         function scheduleNextEvent() {
             let p = patients[state.currentCam]; 
-            // Faster bubbles: Base 1.5s, gets very fast with stress
             let delay = Math.max(400, 1500 - (p.stress * 12)); 
-            
             setTimeout(() => {
                 if(document.getElementById('screen-night').classList.contains('active')) {
-                    randomEvent();
-                    scheduleNextEvent();
+                    randomEvent(); scheduleNextEvent();
                 }
             }, delay);
         }
@@ -1009,44 +1861,29 @@
         function updateNightVisuals() {
             const p = patients[state.currentCam];
             const feed = document.getElementById('night-feed');
-            
-            // Night Flash Effect (Stress > 50)
             if (p.stress > 50) {
                 if (Math.random() < 0.1 + (p.stress * 0.005)) {
                     feed.src = p.img.crazy;
                     setTimeout(() => feed.src = p.img.normal, 150 + Math.random() * 200);
-                } else {
-                    feed.src = p.img.normal;
-                }
-            } else {
-                feed.src = p.img.normal;
-            }
+                } else { feed.src = p.img.normal; }
+            } else { feed.src = p.img.normal; }
         }
 
         function gameLoop() {
             state.time += 10; 
-            let h = Math.floor(state.time / 60);
-            if (h === 0) h = 12;
-            document.getElementById('night-clock').innerText = `${h}:00 AM`;
-
-            state.power -= 0.3; 
-            document.getElementById('night-power').innerText = Math.floor(state.power);
-
-            // Hardcore Difficulty
-            let gain = 1.2; 
-            let multiplier = (state.time > 180) ? 2.0 : 1.0;
-
+            let h = Math.floor(state.time / 60); if (h === 0) h = 12;
+            let m = state.time % 60;
+            document.getElementById('night-clock').innerText = `${h}:${m < 10 ? '0'+m : m} AM`;
+            state.power -= 0.3; document.getElementById('night-power').innerText = Math.floor(state.power);
+            let gain = (currentDay >= 4) ? 1.8 : 1.2; let multiplier = (state.time > 180) ? 2.0 : 1.0;
             patients.forEach((p, i) => {
                 let effectiveGain = p.fixed ? 0.3 : gain;
                 p.stress += effectiveGain * multiplier; 
                 let bar = document.getElementById(`bar-${i}`);
                 if(bar) bar.style.width = Math.min(100, p.stress) + '%';
-                
                 if(i === state.currentCam) updateNightVisuals();
-
                 if (p.stress >= 100) triggerJumpscare(p);
             });
-
             if (state.time >= 360) winGame();
             if (state.power <= 0) gameOver("電力耗盡，系統關閉。");
         }
@@ -1060,10 +1897,8 @@
                 return;
             }
             if (state.isJammed) return;
-
             let targetIdx = Math.floor(Math.random() * patients.length);
             let p = patients[targetIdx];
-            
             if (targetIdx !== state.currentCam) {
                 let btn = document.getElementById(`cam-${targetIdx}`);
                 if(btn) {
@@ -1072,29 +1907,44 @@
                 }
                 p.stress += 4; 
             }
-
             if (!p.bubbles) p.bubbles = [];
             if (p.bubbles.length < 3) {
+                // 根據天數選擇台詞
+                let lines = currentDay === 1 ? p.linesDay1 : (currentDay === 2 ? p.linesDay2 : (currentDay === 3 ? p.linesDay3 : p.linesDay4));
+                if (!lines) lines = p.linesDay1;
+
+                // Day 3 Fake Bubble Logic
+                let isFake = false;
+                let text = lines[Math.floor(Math.random() * lines.length)];
+                
+                if (currentDay >= 3 && Math.random() < 0.3) {
+                    isFake = true;
+                    text = p.fakeLines[Math.floor(Math.random() * p.fakeLines.length)];
+                }
+
                 let newBubble = {
-                    text: p.lines[Math.floor(Math.random() * p.lines.length)],
-                    top: 20 + Math.random() * 50,
-                    left: 20 + Math.random() * 50,
-                    id: Date.now() + Math.random()
+                    text: text,
+                    top: 20 + Math.random() * 50, left: 20 + Math.random() * 50,
+                    id: Date.now() + Math.random(),
+                    isFake: isFake
                 };
                 p.bubbles.push(newBubble);
-                
                 if (targetIdx === state.currentCam) renderBubbles();
-                
-                let duration = (state.time > 180) ? 2500 : 3500;
-
+                let duration = (state.time > 180) ? 2000 : 3000;
                 setTimeout(() => {
                     let idx = p.bubbles.findIndex(b => b.id === newBubble.id);
                     if (idx !== -1) {
-                        p.bubbles.splice(idx, 1);
-                        p.stress += 12; 
+                        p.bubbles.splice(idx, 1); p.stress += 15; 
                         if (targetIdx === state.currentCam) renderBubbles();
                     }
                 }, duration);
+            }
+            
+            // Day 3: Phantom Sounds
+            if (currentDay >= 3 && Math.random() < 0.2) {
+                setTimeout(() => {
+                    if(!state.isJammed) audio.playSFX('sfx-type'); // Fake bubble sound
+                }, Math.random() * 2000);
             }
         }
 
@@ -1106,55 +1956,67 @@
         }
 
         function renderBubbles() {
-            const layer = document.getElementById('bubble-layer');
-            layer.innerHTML = '';
+            const layer = document.getElementById('bubble-layer'); layer.innerHTML = '';
             if(state.isJammed) return;
-
             let p = patients[state.currentCam];
             if (!p.bubbles) return;
-
             p.bubbles.forEach((bData, i) => {
-                let b = document.createElement('div');
-                b.className = 'speech-bubble';
+                let b = document.createElement('div'); b.className = 'speech-bubble';
+                if (bData.isFake) b.className += ' fake-bubble';
                 b.innerText = bData.text;
-                b.style.top = bData.top + '%';
-                b.style.left = bData.left + '%';
+                b.style.top = bData.top + '%'; b.style.left = bData.left + '%';
                 b.onclick = (e) => {
                     e.stopPropagation(); 
-                    // Energy Cost
+                    if (bData.isFake) {
+                        state.power -= 10;
+                        audio.playSFX('sfx-alarm');
+                        showWarning("偵測到虛假信號！電力 -10%");
+                        p.bubbles.splice(i, 1); renderBubbles();
+                        return;
+                    }
                     if(state.power < 3) { alert("精力不足，無法安撫！"); return; }
                     state.power -= 3;
-
                     audio.playSFX('sfx-click');
                     p.stress = Math.max(0, p.stress - 20);
-                    p.bubbles.splice(i, 1); 
-                    renderBubbles(); 
+                    p.bubbles.splice(i, 1); renderBubbles(); 
                 };
                 layer.appendChild(b);
             });
         }
 
+        function handleCamClick(e) {
+            if(e.target.classList.contains('speech-bubble')) return;
+            // Day 3 Penalty for clicking empty space
+            if(currentDay >= 3) {
+                state.power -= 5;
+                showWarning("無效操作！電力 -5%");
+            }
+        }
+
         function useBroadcast() {
             if(state.isJammed) return;
-            if (state.broadcastUses <= 0) { alert("廣播次數已用盡！"); return; }
-            if (state.power < 10) { alert("電力不足！"); return; }
-            
-            state.power -= 10;
-            state.broadcastUses--;
+            if (state.broadcastUses <= 0) { showSystemMessage("SYSTEM", "廣播次數已用盡！", "fail"); return; }
+            if (state.power < 10) { showSystemMessage("SYSTEM", "電力不足！", "fail"); return; }
+            state.power -= 10; state.broadcastUses--;
             updateBroadcastBtn();
-
             audio.playSFX('sfx-scan');
             patients.forEach(p => p.stress = Math.max(0, p.stress - 20));
-            alert("已播放安撫廣播 (全體壓力 -20)");
+            showSystemMessage("BROADCAST", "已播放安撫廣播<br>全體壓力 -20", "success");
         }
 
-        function updateBroadcastBtn() {
-            document.getElementById('btn-broadcast').innerHTML = `<span>📢</span> 廣播 (${state.broadcastUses})`;
-        }
+        function updateBroadcastBtn() { document.getElementById('btn-broadcast').innerHTML = `<span>📢</span> 廣播 (${state.broadcastUses})`; }
 
         function useSedative() {
             if(state.isJammed) return;
             if (state.sedativeUsed) return;
+            
+            // Day 4 Resistance
+            if (currentDay >= 4 && Math.random() < 0.5) {
+                showSystemMessage("RESISTED", "鎮定劑無效！<br>病患產生抗藥性。", "fail");
+                audio.playSFX('sfx-fail');
+                return;
+            }
+
             state.sedativeUsed = true;
             document.getElementById('btn-sedative').disabled = true;
             audio.playSFX('sfx-scan');
@@ -1171,25 +2033,61 @@
             img.src = p.img.crazy;
             jump.style.display = 'flex';
             audio.playSFX('sfx-jumpscare');
-            
-            setTimeout(() => {
-                alert(`GAME OVER: ${p.name} 突破了收容！`);
-                location.reload();
-            }, 2000);
+            setTimeout(() => { showSystemMessage("CONTAINMENT BREACH", `GAME OVER<br>${p.name} 突破了收容！`, "fail", () => location.reload()); }, 2000);
         }
 
         function gameOver(msg) {
             state.intervals.forEach(clearInterval);
-            alert("GAME OVER: " + msg);
-            location.reload();
+            showSystemMessage("SYSTEM FAILURE", `GAME OVER<br>${msg}`, "fail", () => location.reload());
         }
 
         function winGame() {
             state.intervals.forEach(clearInterval);
-            alert("6:00 AM - 存活確認。\n恭喜完成 Demo！");
-            location.reload();
+            if(currentDay <= 4) {
+                startHasselDebrief();
+            } else {
+                showSystemMessage("DEMO COMPLETE", "感謝您的遊玩。<br>系統即將重置。", "success", () => location.reload());
+            }
         }
 
+        // --- FILES & SAVE ---
+        function toggleFiles() {
+            const modal = document.getElementById('modal-files');
+            if(modal.style.display === 'flex') modal.style.display = 'none';
+            else { updateFilesList(); modal.style.display = 'flex'; }
+        }
+        function updateFilesList() {
+            const list = document.getElementById('files-list'); list.innerHTML = '';
+            patients.forEach(p => {
+                let statusClass = p.fixed ? 'stable' : '';
+                let statusText = p.fixed ? 'STABLE' : 'UNSTABLE';
+                let keyText = p.unlockedKey ? `<span>${p.unlockedKey}</span>` : '[未解鎖]';
+                let logicText = p.unlockedLogic ? `<div class="keyword-box" style="margin-top:5px;">LOGIC: <span style="color:var(--neon-yellow)">${p.unlockedLogic}</span></div>` : '';
+                let div = document.createElement('div');
+                div.className = `patient-entry ${statusClass}`;
+                
+                div.innerHTML = `
+                    <h3>${p.name}</h3>
+                    <div>STATUS: ${statusText}</div>
+                    <div class="patient-details">
+                        <div style="margin-bottom:10px; color:#fff;">${p.profile}</div>
+                        <div class="keyword-box">KEYWORD: ${keyText}</div>
+                        ${logicText}
+                    </div>
+                `;
+                div.onclick = () => {
+                    div.classList.toggle('expanded');
+                    audio.playSFX('sfx-click');
+                };
+                list.appendChild(div);
+            });
+        }
+
+        // 初始化：讀取存檔
+        if(localStorage.getItem('psycho_log_unlocked')) {
+            unlockedDays = parseInt(localStorage.getItem('psycho_log_unlocked'));
+            updateChapterUI();
+        }
     </script>
 </body>
 </html>
